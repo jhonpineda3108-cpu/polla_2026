@@ -3,787 +3,175 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>La Quiniela Mundial Hub</title>
-<style>
-  :root{
-    --bg:#00030a;
-    --bg-2:#0a1020;
-    --panel:rgba(255,255,255,0.04);
-    --panel-strong:rgba(255,255,255,0.07);
-    --border:rgba(212,175,55,0.18);
-    --gold:#d4a017;
-    --gold-light:#f3cf6b;
-    --teal:#d4a017;
-    --text:#f5f1e8;
-    --text-dim:#9a958a;
-    --danger:#e25a5a;
-    --radius:14px;
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    font-family:'Inter','Segoe UI',Arial,sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    min-height:100vh;
-  }
-  .app{ max-width:1180px; margin:0 auto; padding:0 20px 60px; }
-
-  header.hero{
-    width:100%;
-    aspect-ratio:1366/668;
-    background-image:url('assets/images/header-mundial.jpg');
-    background-size:cover;
-    background-position:top center;
-    position:relative;
-    margin-bottom:0;
-  }
-  #admin-btn{
-    position:absolute;
-    top:38px; right:24px;
-    background:linear-gradient(135deg, var(--gold-light), var(--gold));
-    border:none; color:#1a1300;
-    padding:10px 20px; border-radius:24px; font-size:13px; font-weight:800; cursor:pointer;
-    display:flex; align-items:center; gap:6px;
-    box-shadow:0 4px 14px rgba(212,160,23,0.35);
-  }
-  #admin-btn:hover{ filter:brightness(1.06); }
-  #admin-btn.activo{ background:linear-gradient(135deg, #6be09a, #2fae6b); color:#06210f; }
-
-  nav.tabs{
-    display:flex; gap:4px; margin:18px 0 24px; border-bottom:1px solid var(--border);
-    overflow-x:auto; padding-bottom:0;
-  }
-  nav.tabs button{
-    background:none; border:none; color:var(--text-dim); padding:12px 18px;
-    font-size:13.5px; font-weight:700; cursor:pointer; border-bottom:2px solid transparent;
-    white-space:nowrap; display:flex; align-items:center; gap:7px; text-transform:uppercase; letter-spacing:.3px;
-  }
-  nav.tabs button.activo{ color:var(--gold-light); border-bottom-color:var(--gold); }
-  nav.tabs button:hover{ color:var(--text); }
-
-  .panel{
-    background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
-    padding:20px 22px; margin-bottom:20px;
-    backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
-  }
-  .panel-title{
-    font-weight:800; font-size:13px; color:var(--gold-light); text-transform:uppercase;
-    letter-spacing:.8px; margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid var(--border);
-    display:flex; align-items:center; gap:8px;
-  }
-
-  table.tabla{ width:100%; border-collapse:collapse; font-size:13.5px; }
-  table.tabla th{
-    text-align:left; padding:9px 10px; color:var(--text-dim); font-weight:700;
-    font-size:11.5px; text-transform:uppercase; letter-spacing:.4px;
-    border-bottom:1px solid var(--border);
-  }
-  table.tabla td{ padding:9px 10px; border-bottom:1px solid rgba(255,255,255,0.05); }
-  table.tabla tr:hover td{ background:rgba(255,255,255,0.03); }
-  table.tabla td.num, table.tabla th.num{ text-align:center; }
-  .equipo-cell{ display:flex; align-items:center; gap:8px; font-weight:700; }
-  .equipo-cell img{ width:22px; height:16px; object-fit:cover; border-radius:3px; box-shadow:0 0 0 1px rgba(255,255,255,0.12); }
-  .pos-badge{
-    width:24px; height:24px; border-radius:7px; display:inline-flex; align-items:center; justify-content:center;
-    font-weight:800; font-size:12px; background:rgba(255,255,255,0.08);
-  }
-  .pos-badge.top{ background:rgba(240,180,41,0.25); color:var(--gold-light); }
-
-  select, input[type=number], input[type=text], input[type=password]{
-    background:rgba(255,255,255,0.06); border:1px solid var(--border); color:var(--text);
-    padding:9px 12px; border-radius:9px; font-size:13.5px; font-family:inherit;
-  }
-  select{ -webkit-appearance:none; -moz-appearance:none; appearance:none; cursor:pointer; }
-  select option{
-    background:#13182a; color:var(--text); padding:8px;
-  }
-  select:focus, input:focus{ outline:none; border-color:var(--teal); }
-  button.btn{
-    background:linear-gradient(135deg, var(--gold), #c97f00); color:#1a1300; border:none;
-    padding:10px 18px; border-radius:9px; font-weight:800; font-size:13.5px; cursor:pointer;
-  }
-  button.btn:hover{ filter:brightness(1.08); }
-  button.btn.secondary{ background:var(--panel-strong); color:var(--text); border:1px solid var(--border); }
-  button.btn.danger{ background:rgba(226,90,90,0.2); color:#ffb3b3; border:1px solid rgba(226,90,90,0.4); }
-
-  .row-flex{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
-  .metric{
-    background:var(--panel-strong); border:1px solid var(--border); border-radius:12px;
-    padding:14px 18px; text-align:center; flex:1; min-width:140px;
-  }
-  .metric .label{ font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.5px; margin-bottom:4px; }
-  .metric .value{ font-size:20px; font-weight:800; color:var(--gold-light); }
-
-  .modal-overlay{
-    position:fixed; inset:0; background:rgba(0,0,0,0.6); display:none;
-    align-items:center; justify-content:center; z-index:50;
-  }
-  .modal-overlay.activo{ display:flex; }
-  .modal{
-    background:var(--bg-2); border:1px solid var(--border); border-radius:var(--radius);
-    padding:24px; width:340px;
-  }
-  .modal h3{ margin:0 0 14px; font-size:16px; }
-  .modal .row-flex{ margin-top:14px; }
-
-  .hint{ color:var(--text-dim); font-size:13px; }
-  .vacio{ color:var(--text-dim); font-style:italic; padding:20px 0; text-align:center; }
-
-  footer{ text-align:center; color:#5a7ca3; font-size:12.5px; margin-top:40px; }
-
-  /* ---------------- BRACKET ---------------- */
-  .bracket-grid{
-    display:grid;
-    grid-template-columns: 180px 180px 180px 180px 180px 180px 180px 180px 180px;
-    column-gap:14px;
-    overflow-x:auto;
-    padding-bottom:8px;
-  }
-  .bracket-col-header{
-    text-align:center; color:var(--teal); font-weight:800; font-size:12px;
-    letter-spacing:.4px; margin-bottom:10px;
-  }
-  .bracket-col-header.final{ color:var(--gold-light); }
-  .bracket-col{ display:flex; flex-direction:column; justify-content:space-around; min-height:700px; }
-  .bk-matchup{
-    border:1px solid var(--border); border-radius:10px; overflow:hidden; margin-bottom:8px;
-    background:rgba(255,255,255,0.05); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
-  }
-  .bk-team{
-    display:flex; align-items:center; gap:7px; padding:8px 9px; font-weight:700; font-size:12.5px;
-    border-bottom:1px solid var(--border); cursor:pointer; user-select:none;
-  }
-  .bk-matchup .bk-team:last-child{ border-bottom:none; }
-  .bk-team:hover{ background:rgba(255,255,255,0.08); }
-  .bk-team.disabled{ cursor:default; }
-  .bk-team.disabled:hover{ background:none; }
-  .bk-team.winner{ background:rgba(240,180,41,0.16); color:var(--gold-light); }
-  .bk-team.placeholder{ color:var(--text-dim); font-weight:500; font-size:11px; opacity:.6; cursor:default; }
-  .bk-team img{ width:18px; height:13px; object-fit:cover; border-radius:2px; box-shadow:0 0 0 1px rgba(255,255,255,0.15); }
-  .bk-special{
-    border:1px solid rgba(240,180,41,0.5); border-radius:10px; overflow:hidden; margin-bottom:12px;
-    background:rgba(255,255,255,0.05); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
-  }
-  .bk-special-header{
-    background:rgba(240,180,41,0.2); color:var(--gold-light); font-weight:800; font-size:12.5px;
-    padding:7px 9px;
-  }
-  .bk-special-header.third{ background:rgba(224,106,26,0.2); color:#f4a868; }
-
-  /* ---------------- ADMIN ---------------- */
-  nav.admin-subtabs{ display:flex; gap:4px; margin-bottom:16px; flex-wrap:wrap; }
-  nav.admin-subtabs button{
-    background:var(--panel-strong); border:1px solid var(--border); color:var(--text-dim);
-    padding:8px 14px; border-radius:8px; font-size:12.5px; font-weight:700; cursor:pointer;
-  }
-  nav.admin-subtabs button.activo{ background:rgba(240,180,41,0.18); color:var(--gold-light); border-color:rgba(240,180,41,0.4); }
-  .form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; max-width:480px; }
-  .form-grid label{ font-size:12px; color:var(--text-dim); display:block; margin-bottom:5px; }
-  .form-grid input, .form-grid select{ width:100%; }
-
-  /* ---------------- DESGLOSE DE ACIERTOS ---------------- */
-  .desglose-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px; margin-top:18px; }
-  .desglose-col h4{
-    font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.5px;
-    margin:0 0 10px; font-weight:700;
-  }
-  .resultado-real-banner{
-    background:var(--panel-strong); border:1px solid var(--border); border-radius:10px;
-    padding:12px 16px; margin:14px 0 4px; font-size:14px;
-  }
-
-  /* ---------------- PRÓXIMO PARTIDO + RESUMEN ---------------- */
-  .resumen-row{ display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-bottom:20px; }
-  @media (max-width:760px){ .resumen-row{ grid-template-columns:1fr; } }
-  .proximo-panel{ text-align:center; }
-  .proximo-panel .titulo-mini{
-    color:var(--gold-light); font-weight:800; font-size:13px; text-transform:uppercase;
-    letter-spacing:.8px; margin-bottom:18px; padding-bottom:10px; border-bottom:1px solid var(--border);
-  }
-  .vs-row{ display:flex; align-items:center; justify-content:center; gap:36px; }
-  .vs-equipo{ display:flex; flex-direction:column; align-items:center; gap:8px; min-width:90px; }
-  .vs-equipo img{ width:56px; height:40px; object-fit:cover; border-radius:6px; box-shadow:0 0 0 1px var(--border); }
-  .vs-equipo span{ font-weight:700; font-size:14px; }
-  .vs-centro{ text-align:center; }
-  .vs-centro .fecha{ font-size:12px; color:var(--text-dim); margin-bottom:2px; }
-  .vs-centro .vs{ font-size:22px; font-weight:900; color:var(--gold-light); letter-spacing:1px; }
-  .stat-list{ display:flex; flex-direction:column; gap:14px; justify-content:center; height:100%; }
-  .stat-item{ display:flex; align-items:center; gap:12px; font-size:14px; }
-  .stat-item .num{ font-weight:800; color:var(--gold-light); font-size:16px; }
-</style>
+<title>The World Cup 2026 · Pronósticos de partidos</title>
+<link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-<header class="hero">
-  <button id="admin-btn" onclick="abrirModalAdmin()">🛡️ Login</button>
+<header class="site-header">
+  <div class="top-bar">
+    <div class="sponsor">Patrocinado por <strong>Imaginet Studio</strong></div>
+    <div class="author">
+      <span class="by">By · Nicolás Zambrano</span>
+      <span class="year gold-text">2026</span>
+    </div>
+  </div>
+
+  <div class="brand-row">
+    <div class="title-block">
+      <p class="eyebrow">Copa Mundial de la FIFA 2026</p>
+      <h1 class="gold-text">Pronósticos de partidos</h1>
+    </div>
+    <button class="btn-login" id="btnLogin" type="button">Login</button>
+  </div>
+
+  <nav class="nav-tabs" id="navTabs">
+    <a href="#" data-tab="posiciones" class="active">Posiciones</a>
+    <a href="#" data-tab="grupos">Grupos</a>
+    <a href="#" data-tab="eliminatoria">Eliminatoria</a>
+    <a href="#" data-tab="pronosticos">Pronósticos</a>
+    <a href="#" data-tab="podio">Podio</a>
+    <a href="#" data-tab="admin">Admin</a>
+  </nav>
 </header>
 
-<div class="app">
-  <nav class="tabs">
-    <button data-tab="posiciones" class="activo">📅 Posiciones</button>
-    <button data-tab="grupos">▦ Grupos</button>
-    <button data-tab="bracket">🏆 Eliminatoria</button>
-    <button data-tab="pronosticos">⇄ Pronósticos</button>
-    <button data-tab="podio">🥇 Podio</button>
-    <button data-tab="admin" id="tab-btn-admin" style="display:none;">🛡️ Admin</button>
-  </nav>
+<main>
 
-  <section id="tab-posiciones"></section>
-  <section id="tab-grupos" style="display:none"></section>
-  <section id="tab-bracket" style="display:none"></section>
-  <section id="tab-pronosticos" style="display:none"></section>
-  <section id="tab-podio" style="display:none"></section>
-  <section id="tab-admin" style="display:none"></section>
+  <!-- ===================== POSICIONES ===================== -->
+  <section class="tab-panel" id="tab-posiciones">
 
-  <footer>LA QUINIELA MUNDIAL HUB © 2026</footer>
-</div>
-
-<div class="modal-overlay" id="modal-admin">
-  <div class="modal">
-    <h3>🔒 Acceso de administrador</h3>
-    <input type="password" id="admin-pass" placeholder="Contraseña" style="width:100%" onkeydown="if(event.key==='Enter')loginAdmin()">
-    <div class="row-flex">
-      <button class="btn" onclick="loginAdmin()">Entrar</button>
-      <button class="btn secondary" onclick="cerrarModalAdmin()">Cancelar</button>
+    <div class="card next-match">
+      <h2>Próximo partido</h2>
+      <div class="next-match-stats">
+        <div><strong id="statParticipantes">52</strong>Participantes</div>
+        <div><strong id="statPartidos">30</strong>Partidos</div>
+        <div><strong id="statFase">Fase de grupos</strong></div>
+      </div>
+      <div class="match-row">
+        <div class="team">
+          <img src="assets/img/banderas-match/colombia-match.jpg" alt="Colombia">
+          <span>Colombia</span>
+        </div>
+        <div class="match-center">
+          <div class="date" id="matchDate">Jun 11</div>
+          <div class="vs">vs</div>
+          <div class="time" id="matchTime">18:00</div>
+        </div>
+        <div class="team">
+          <img src="assets/img/banderas-match/argentina-match.jpg" alt="Argentina">
+          <span>Argentina</span>
+        </div>
+      </div>
     </div>
-    <p class="hint" id="admin-error" style="color:#ffb3b3;display:none;margin-top:10px;">Contraseña incorrecta.</p>
-  </div>
-</div>
 
-<script>
-/* ----------------------------------------------------------------------
-   CONFIG: apunta esto a la URL real de tu backend cuando lo despliegues
----------------------------------------------------------------------- */
-const API_BASE = window.API_BASE || "https://polla-2026.onrender.com";
-
-let adminPassword = sessionStorage.getItem("admin_pass") || null;
-
-const CODIGOS_PAIS = {
-  "México":"mx","Corea del Sur":"kr","Chequia":"cz","Sudáfrica":"za","Canadá":"ca",
-  "Suiza":"ch","Catar":"qa","Bosnia":"ba","Escocia":"gb-sct","Brasil":"br","Marruecos":"ma",
-  "Haití":"ht","Estados Unidos":"us","Australia":"au","Turquía":"tr","Paraguay":"py",
-  "Alemania":"de","Costa de Marfil":"ci","Ecuador":"ec","Curazao":"cw","Suecia":"se",
-  "Países Bajos":"nl","Holanda":"nl","Japón":"jp","Túnez":"tn","Irán":"ir","Nueva Zelanda":"nz",
-  "Bélgica":"be","Egipto":"eg","Arabia Saudí":"sa","Arabia Saudita":"sa","Uruguay":"uy",
-  "España":"es","Cabo Verde":"cv","Noruega":"no","Francia":"fr","Senegal":"sn","Irak":"iq",
-  "Argentina":"ar","Austria":"at","Jordania":"jo","Argelia":"dz","Colombia":"co","Portugal":"pt",
-  "RD del Congo":"cd","Uzbekistán":"uz","Inglaterra":"gb-eng","Ghana":"gh","Panamá":"pa","Croacia":"hr",
-};
-function banderaUrl(equipo){
-  const c = CODIGOS_PAIS[equipo];
-  return c ? `https://flagcdn.com/w40/${c}.png` : null;
-}
-function equipoHtml(equipo){
-  const url = banderaUrl(equipo);
-  const img = url ? `<img src="${url}" alt="">` : "";
-  return `<span class="equipo-cell">${img}${equipo}</span>`;
-}
-
-async function api(path, opts={}){
-  const headers = Object.assign({"Content-Type":"application/json"}, opts.headers || {});
-  if(adminPassword) headers["X-Admin-Password"] = adminPassword;
-  const res = await fetch(API_BASE + path, Object.assign({}, opts, {headers}));
-  if(!res.ok){
-    const detalle = await res.text();
-    throw new Error(`${res.status}: ${detalle}`);
-  }
-  return res.json();
-}
-
-/* ---------------- NAVEGACIÓN DE PESTAÑAS ---------------- */
-document.querySelectorAll("nav.tabs button").forEach(btn => {
-  btn.addEventListener("click", () => irATab(btn.dataset.tab));
-});
-function irATab(tab){
-  document.querySelectorAll("nav.tabs button").forEach(b => b.classList.toggle("activo", b.dataset.tab === tab));
-  ["posiciones","grupos","bracket","pronosticos","podio","admin"].forEach(t => {
-    document.getElementById(`tab-${t}`).style.display = (t === tab) ? "block" : "none";
-  });
-  if(tab === "posiciones") renderPosiciones();
-  if(tab === "grupos") renderGrupos();
-  if(tab === "bracket") renderBracket();
-  if(tab === "pronosticos") renderPronosticos();
-  if(tab === "podio") renderPodio();
-  if(tab === "admin") renderAdmin();
-}
-
-/* ---------------- ADMIN ---------------- */
-function abrirModalAdmin(){
-  if(adminPassword){
-    if(confirm("¿Cerrar sesión de administrador?")){
-      adminPassword = null;
-      sessionStorage.removeItem("admin_pass");
-      actualizarBotonAdmin();
-    }
-    return;
-  }
-  document.getElementById("modal-admin").classList.add("activo");
-}
-function cerrarModalAdmin(){
-  document.getElementById("modal-admin").classList.remove("activo");
-}
-async function loginAdmin(){
-  const pass = document.getElementById("admin-pass").value;
-  try{
-    await fetch(API_BASE + "/api/admin/login?password=" + encodeURIComponent(pass), {method:"POST"});
-    adminPassword = pass;
-    sessionStorage.setItem("admin_pass", pass);
-    cerrarModalAdmin();
-    actualizarBotonAdmin();
-    document.getElementById("admin-error").style.display = "none";
-  }catch(e){
-    document.getElementById("admin-error").style.display = "block";
-  }
-}
-function actualizarBotonAdmin(){
-  const btn = document.getElementById("admin-btn");
-  btn.classList.toggle("activo", !!adminPassword);
-  btn.textContent = adminPassword ? "🔓 Admin activo" : "🔒 Admin";
-  document.getElementById("tab-btn-admin").style.display = adminPassword ? "inline-block" : "none";
-  const activa = document.querySelector("nav.tabs button.activo").dataset.tab;
-  irATab(activa);
-}
-
-/* ---------------- POSICIONES ---------------- */
-async function renderResumen(){
-  try{
-    const r = await api("/api/resumen");
-    let proximoHtml;
-    if(r.proximo_partido){
-      const p = r.proximo_partido;
-      const banderaLocal = banderaUrl(p.equipo_local);
-      const banderaVisit = banderaUrl(p.equipo_visitante);
-      proximoHtml = `
-        <div class="panel proximo-panel">
-          <div class="titulo-mini">Próximo partido</div>
-          <div class="vs-row">
-            <div class="vs-equipo">${banderaLocal?`<img src="${banderaLocal}">`:""}<span>${p.equipo_local}</span></div>
-            <div class="vs-centro"><div class="fecha">${p.fecha}</div><div class="vs">VS</div></div>
-            <div class="vs-equipo">${banderaVisit?`<img src="${banderaVisit}">`:""}<span>${p.equipo_visitante}</span></div>
-          </div>
-        </div>`;
-    }else{
-      proximoHtml = `
-        <div class="panel proximo-panel">
-          <div class="titulo-mini">Próximo partido</div>
-          <p class="vacio">No hay partidos pendientes por jugar.</p>
-        </div>`;
-    }
-    const statsHtml = `
-      <div class="panel">
-        <div class="stat-list">
-          <div class="stat-item">👤 <span class="num">${r.participantes}</span> participantes</div>
-          <div class="stat-item">⚽ <span class="num">${r.partidos_totales}</span> partidos</div>
-          <div class="stat-item">📅 <span class="num">${r.partidos_jugados}</span> jugados</div>
-        </div>
-      </div>`;
-    document.getElementById("resumen-row").innerHTML = proximoHtml + statsHtml;
-  }catch(e){
-    document.getElementById("resumen-row").innerHTML = `<div class="panel"><p class="vacio">No se pudo cargar el resumen.</p></div>`;
-  }
-}
-
-async function renderPosiciones(){
-  const el = document.getElementById("tab-posiciones");
-  el.innerHTML = `
-    <div class="resumen-row" id="resumen-row"><div class="panel"><p class="hint">Cargando...</p></div></div>
-    <div id="tabla-posiciones-cont"><div class="panel"><div class="panel-title">🏆 Tabla de posiciones</div><p class="hint">Cargando...</p></div></div>
-    <div id="desglose-cont"></div>`;
-  renderResumen();
-  renderDesglose();
-
-  const cont = document.getElementById("tabla-posiciones-cont");
-  try{
-    const tabla = await api("/api/posiciones");
-    if(tabla.length === 0){
-      cont.innerHTML = `<div class="panel"><div class="panel-title">🏆 Tabla de posiciones</div><p class="vacio">Todavía no hay resultados cargados.</p></div>`;
-      return;
-    }
-    const filas = tabla.map(r => `
-      <tr>
-        <td class="num"><span class="pos-badge ${r.pos<=3?'top':''}">${r.pos}</span></td>
-        <td>${r.usuario}</td>
-        <td class="num">${r.pj}</td>
-        <td class="num">${r.pg}</td>
-        <td class="num">${r.pe}</td>
-        <td class="num">${r.pp}</td>
-        <td class="num">${r.pts_podio}</td>
-        <td class="num">${r.pts_premios}</td>
-        <td class="num"><b>${r.pts}</b></td>
-      </tr>`).join("");
-    cont.innerHTML = `
-      <div class="panel">
-        <div class="panel-title">🏆 Tabla de posiciones acumulada</div>
-        <table class="tabla">
-          <thead><tr><th>Pos</th><th>Usuario</th><th class="num">PJ</th><th class="num">PG</th><th class="num">PE</th><th class="num">PP</th><th class="num">Pts. podio</th><th class="num">Pts. premios</th><th class="num">Pts</th></tr></thead>
-          <tbody>${filas}</tbody>
+    <div class="card">
+      <h2>Tabla de posiciones</h2>
+      <div class="table-wrap">
+        <table id="tablaPosiciones">
+          <thead>
+            <tr>
+              <th>Pos</th>
+              <th>Usuario</th>
+              <th>PJ</th>
+              <th>PG</th>
+              <th>PE</th>
+              <th>PP</th>
+              <th>Pts. Podio</th>
+              <th>Pts. Premios</th>
+              <th>Pts</th>
+            </tr>
+          </thead>
+          <tbody><!-- filas generadas por JS --></tbody>
         </table>
-      </div>`;
-  }catch(e){
-    cont.innerHTML = `<div class="panel"><p class="vacio">Error cargando posiciones: ${e.message}</p></div>`;
-  }
-}
+      </div>
+    </div>
 
-/* ---------------- GRUPOS ---------------- */
-async function renderGrupos(){
-  const el = document.getElementById("tab-grupos");
-  el.innerHTML = `<div class="panel"><p class="hint">Cargando...</p></div>`;
-  try{
-    const grupos = await api("/api/grupos");
-    const opciones = grupos.map(g => `<option value="${g}">Grupo ${g}</option>`).join("");
-    el.innerHTML = `
-      <div class="panel">
-        <div class="panel-title">⚽ Posiciones por grupo</div>
-        <div class="row-flex" style="margin-bottom:16px;">
-          <select id="grupo-sel" onchange="cargarGrupo()">${opciones}</select>
-        </div>
-        <div id="tabla-grupo"></div>
-      </div>`;
-    cargarGrupo();
-  }catch(e){
-    el.innerHTML = `<div class="panel"><p class="vacio">Error cargando grupos: ${e.message}</p></div>`;
-  }
-}
-async function cargarGrupo(){
-  const grupo = document.getElementById("grupo-sel").value;
-  const cont = document.getElementById("tabla-grupo");
-  cont.innerHTML = `<p class="hint">Cargando...</p>`;
-  const filas = await api(`/api/grupos/${grupo}/posiciones`);
-  const filasHtml = filas.map(r => `
-    <tr>
-      <td class="num"><span class="pos-badge ${r.pos<=2?'top':''}">${r.pos}</span></td>
-      <td>${equipoHtml(r.equipo)}</td>
-      <td class="num">${r.pj}</td><td class="num">${r.pg}</td><td class="num">${r.pe}</td><td class="num">${r.pp}</td>
-      <td class="num">${r.gf}</td><td class="num">${r.gc}</td><td class="num">${r.dg}</td><td class="num"><b>${r.pts}</b></td>
-    </tr>`).join("");
-  cont.innerHTML = `
-    <table class="tabla">
-      <thead><tr><th>Pos</th><th>Equipo</th><th class="num">PJ</th><th class="num">PG</th><th class="num">PE</th><th class="num">PP</th><th class="num">GF</th><th class="num">GC</th><th class="num">DG</th><th class="num">Pts</th></tr></thead>
-      <tbody>${filasHtml}</tbody>
-    </table>`;
-}
+    <div class="card">
+      <h2>Desglose de aciertos</h2>
+      <div class="breakdown-header">
+        <select id="selectPartidoDesglose">
+          <option>Estados Unidos vs Australia (19/06/2026)</option>
+        </select>
+        <span class="result" id="resultadoReal">Resultado real: Estados Unidos 2 - 0 Australia</span>
+      </div>
 
-/* ---------------- PRONÓSTICOS ---------------- */
-async function renderPronosticos(){
-  const el = document.getElementById("tab-pronosticos");
-  el.innerHTML = `<div class="panel"><p class="hint">Cargando...</p></div>`;
-  try{
-    const partidos = await api("/api/partidos");
-    const opciones = partidos.map(p =>
-      `<option value="${p['Equipo local']}|${p['Equipo visitante']}|${p['Fecha']}">${p['Equipo local']} vs ${p['Equipo visitante']} (${p['Fecha']})</option>`
-    ).join("");
-    el.innerHTML = `
-      <div class="panel">
-        <div class="panel-title">🔮 Pronósticos de todos</div>
-        <div class="row-flex" style="margin-bottom:16px;">
-          <select id="partido-sel" onchange="cargarPronosticos()" style="min-width:280px;">
-            <option value="">Todos los partidos</option>
-            ${opciones}
-          </select>
-        </div>
-        <div id="tabla-pronosticos"></div>
-      </div>`;
-    cargarPronosticos();
-  }catch(e){
-    el.innerHTML = `<div class="panel"><p class="vacio">Error cargando pronósticos: ${e.message}</p></div>`;
-  }
-}
-async function cargarPronosticos(){
-  const sel = document.getElementById("partido-sel").value;
-  const cont = document.getElementById("tabla-pronosticos");
-  cont.innerHTML = `<p class="hint">Cargando...</p>`;
-  let url = "/api/pronosticos";
-  if(sel){
-    const [el_, ev, fecha] = sel.split("|");
-    url += `?equipo_local=${encodeURIComponent(el_)}&equipo_visitante=${encodeURIComponent(ev)}&fecha=${encodeURIComponent(fecha)}`;
-  }
-  const filas = await api(url);
-  if(filas.length === 0){
-    cont.innerHTML = `<p class="vacio">Sin pronósticos para este filtro.</p>`;
-    return;
-  }
-  const filasHtml = filas.map(f => `
-    <tr>
-      <td>${f.Persona}</td>
-      <td>${equipoHtml(f["Equipo local"])}</td>
-      <td class="num">${f["Goles local"]}</td>
-      <td class="num">${f["Goles visitante"]}</td>
-      <td>${equipoHtml(f["Equipo visitante"])}</td>
-      <td>${f.Fecha}</td>
-    </tr>`).join("");
-  cont.innerHTML = `
-    <table class="tabla">
-      <thead><tr><th>Persona</th><th>Local</th><th class="num">GL</th><th class="num">GV</th><th>Visitante</th><th>Fecha</th></tr></thead>
-      <tbody>${filasHtml}</tbody>
-    </table>`;
-}
+      <div class="breakdown-rules">
+        <div><strong>Marcador exacto</strong>6 pts</div>
+        <div><strong>Ganador/empate sin exacto</strong>3 pts</div>
+        <div><strong>Goles de un equipo</strong>1 pt</div>
+      </div>
 
-/* ---------------- PODIO Y PREMIOS ---------------- */
-async function renderPodio(){
-  const el = document.getElementById("tab-podio");
-  el.innerHTML = `<div class="panel"><p class="hint">Cargando...</p></div>`;
-  try{
-    const data = await api("/api/podio");
-    if(data.podio.length === 0 && data.premios.length === 0){
-      el.innerHTML = `<div class="panel"><p class="vacio">No hay datos de podio/premios cargados.</p></div>`;
-      return;
-    }
-    const filasPodio = data.podio.map(p => `
-      <tr><td>${p.Persona}</td><td>${equipoHtml(p["Campeón"])}</td><td>${equipoHtml(p["Subcampeón"])}</td><td>${equipoHtml(p["Tercero"])}</td><td>${equipoHtml(p["Cuarto"])}</td></tr>
-    `).join("");
-    const filasPremios = data.premios.map(p => `
-      <tr><td>${p.Persona}</td><td>${p["Balón de oro"]||"-"}</td><td>${p["Bota de oro"]||"-"}</td><td>${p["Guante de oro"]||"-"}</td></tr>
-    `).join("");
-    el.innerHTML = `
-      <div class="row-flex" style="align-items:stretch;">
-        <div class="panel" style="flex:1;min-width:300px;">
-          <div class="panel-title">🏅 Podio pronosticado</div>
-          <table class="tabla">
-            <thead><tr><th>Persona</th><th>Campeón</th><th>Subcampeón</th><th>Tercero</th><th>Cuarto</th></tr></thead>
-            <tbody>${filasPodio}</tbody>
+      <div class="breakdown-columns">
+        <div class="table-wrap">
+          <table id="tablaExacto">
+            <thead><tr><th>Usuario</th><th>Pts</th></tr></thead>
+            <tbody></tbody>
           </table>
         </div>
-        <div class="panel" style="flex:1;min-width:300px;">
-          <div class="panel-title">🥇 Premios individuales</div>
-          <table class="tabla">
-            <thead><tr><th>Persona</th><th>Balón</th><th>Bota</th><th>Guante</th></tr></thead>
-            <tbody>${filasPremios}</tbody>
+        <div class="table-wrap">
+          <table id="tablaGanador">
+            <thead><tr><th>Usuario</th><th>Pts</th></tr></thead>
+            <tbody></tbody>
           </table>
         </div>
-      </div>`;
-  }catch(e){
-    el.innerHTML = `<div class="panel"><p class="vacio">Error cargando podio: ${e.message}</p></div>`;
-  }
-}
-
-/* ---------------- BRACKET (Fase Eliminatoria) ---------------- */
-const COL_IZQ_16 = ["73","74","75","77","81","82","83","84"];
-const COL_DER_16 = ["76","78","79","80","85","86","87","88"];
-const COL_IZQ_8 = ["89","90","93","94"];
-const COL_DER_8 = ["91","92","95","96"];
-const COL_IZQ_4 = ["97","98"];
-const COL_DER_4 = ["99","100"];
-
-async function renderBracket(){
-  const el = document.getElementById("tab-bracket");
-  el.innerHTML = `<div class="panel"><p class="hint">Cargando...</p></div>`;
-  try{
-    const bracket = await api("/api/bracket");
-    if(!bracket || Object.keys(bracket).length === 0){
-      el.innerHTML = `
-        <div class="panel">
-          <div class="panel-title">🏆 Fase Eliminatoria</div>
-          <p class="vacio">El bracket todavía no se ha inicializado.${adminPassword ? ' Usa el panel de Admin → pestaña Bracket.' : ''}</p>
-        </div>`;
-      return;
-    }
-    window._bracketActual = bracket;
-    el.innerHTML = `
-      <div class="panel">
-        <div class="panel-title">🏆 Fase Eliminatoria <span class="hint" style="font-weight:400;text-transform:none;">· clic en un equipo para avanzarlo, clic otra vez para quitarlo</span></div>
-        <div id="bracket-render"></div>
-      </div>`;
-    pintarBracket();
-  }catch(e){
-    el.innerHTML = `<div class="panel"><p class="vacio">Error cargando el bracket: ${e.message}</p></div>`;
-  }
-}
-
-function bkTeamHtml(matchId, slot){
-  const m = window._bracketActual[matchId];
-  const equipo = m[`team${slot}`];
-  if(!equipo) return `<div class="bk-team placeholder">Por definir</div>`;
-  const ganable = !!(m.teamA && m.teamB) && !!adminPassword;
-  const esGanador = m.winner && m.winner.label === equipo.label;
-  const clases = ["bk-team"];
-  if(esGanador) clases.push("winner");
-  if(!ganable) clases.push("disabled");
-  const onclick = ganable ? `onclick="bkElegirGanador('${matchId}','${slot}')"` : "";
-  const url = equipo.code ? `https://flagcdn.com/w40/${equipo.code}.png` : "";
-  return `<div class="${clases.join(' ')}" ${onclick}>${url?`<img src="${url}">`:""}<span>${equipo.label}</span></div>`;
-}
-function bkMatchupHtml(matchId){
-  return `<div class="bk-matchup">${bkTeamHtml(matchId,'A')}${bkTeamHtml(matchId,'B')}</div>`;
-}
-function bkSpecialHtml(matchId, titulo, claseExtra){
-  return `<div class="bk-special">
-      <div class="bk-special-header ${claseExtra}">${titulo}</div>
-      ${bkTeamHtml(matchId,'A')}${bkTeamHtml(matchId,'B')}
-    </div>`;
-}
-function bkColumna(ids){
-  return `<div class="bracket-col">${ids.map(bkMatchupHtml).join("")}</div>`;
-}
-function pintarBracket(){
-  const headers = ["16avos","8avos","4tos","Semis","FINAL","Semis","4tos","8avos","16avos"];
-  const headerHtml = headers.map(h => `<div class="bracket-col-header ${h==='FINAL'?'final':''}">${h}</div>`).join("");
-  const colHtml = [
-    bkColumna(COL_IZQ_16), bkColumna(COL_IZQ_8), bkColumna(COL_IZQ_4), bkColumna(["101"]),
-    `<div class="bracket-col" style="justify-content:center;">${bkSpecialHtml("104","🏆 FINAL","")}${bkSpecialHtml("103","🥉 3er Puesto","third")}</div>`,
-    bkColumna(["102"]), bkColumna(COL_DER_4), bkColumna(COL_DER_8), bkColumna(COL_DER_16),
-  ].join("");
-  document.getElementById("bracket-render").innerHTML = `
-    <div class="bracket-grid">${headerHtml}</div>
-    <div class="bracket-grid">${colHtml}</div>`;
-}
-async function bkElegirGanador(matchId, slot){
-  try{
-    const bracket = await api("/api/admin/bracket/ganador", {
-      method:"POST", body: JSON.stringify({match_id: matchId, ganador: slot}),
-    });
-    window._bracketActual = bracket;
-    pintarBracket();
-  }catch(e){ alert("Error: " + e.message); }
-}
-
-/* ---------------- ADMIN: panel completo ---------------- */
-let adminSubtab = "registrar";
-async function renderAdmin(){
-  const el = document.getElementById("tab-admin");
-  el.innerHTML = `
-    <nav class="admin-subtabs">
-      <button onclick="irAdminSub('registrar')" class="${adminSubtab==='registrar'?'activo':''}">⚽ Registrar resultado</button>
-      <button onclick="irAdminSub('calendario')" class="${adminSubtab==='calendario'?'activo':''}">📅 Calendario</button>
-      <button onclick="irAdminSub('historial')" class="${adminSubtab==='historial'?'activo':''}">🕑 Historial</button>
-      <button onclick="irAdminSub('bracket')" class="${adminSubtab==='bracket'?'activo':''}">🏆 Bracket</button>
-      <button onclick="irAdminSub('config')" class="${adminSubtab==='config'?'activo':''}">⚙️ Configuración</button>
-    </nav>
-    <div id="admin-contenido"><p class="hint">Cargando...</p></div>`;
-  pintarAdminSub();
-}
-function irAdminSub(sub){ adminSubtab = sub; renderAdmin(); }
-
-async function pintarAdminSub(){
-  const cont = document.getElementById("admin-contenido");
-  if(adminSubtab === "registrar"){
-    const partidos = await api("/api/partidos");
-    const opciones = partidos.map(p => `<option value="${p['Equipo local']}|${p['Equipo visitante']}|${p['Fecha']}">${p['Equipo local']} vs ${p['Equipo visitante']} (${p['Fecha']})</option>`).join("");
-    cont.innerHTML = `
-      <div class="panel">
-        <div class="panel-title">⚽ Registrar resultado del partido</div>
-        <label class="hint">Partido</label>
-        <select id="reg-partido" style="width:100%;max-width:420px;margin-bottom:14px;">${opciones}</select>
-        <div class="form-grid">
-          <div><label>Goles local</label><input type="number" id="reg-gl" min="0" value="0"></div>
-          <div><label>Goles visitante</label><input type="number" id="reg-gv" min="0" value="0"></div>
+        <div class="table-wrap">
+          <table id="tablaGoles">
+            <thead><tr><th>Usuario</th><th>Pts</th></tr></thead>
+            <tbody></tbody>
+          </table>
         </div>
-        <button class="btn" style="margin-top:16px;" onclick="guardarResultadoAdmin()">💾 Guardar resultado</button>
-        <p class="hint" id="reg-msg" style="margin-top:10px;"></p>
-      </div>`;
-  }
-  if(adminSubtab === "calendario"){
-    const partidos = await api("/api/partidos");
-    const filas = partidos.map(p => `<tr><td>${p.Fecha}</td><td>${p.Grupo}</td><td>${p['Equipo local']}</td><td>${p['Equipo visitante']}</td><td class="num">${p.tiene_resultado?'✅':'—'}</td></tr>`).join("");
-    cont.innerHTML = `
-      <div class="panel">
-        <div class="panel-title">📅 Calendario de partidos</div>
-        <table class="tabla"><thead><tr><th>Fecha</th><th>Grupo</th><th>Local</th><th>Visitante</th><th class="num">¿Resultado?</th></tr></thead><tbody>${filas}</tbody></table>
-      </div>`;
-  }
-  if(adminSubtab === "historial"){
-    const historial = await api("/api/historial");
-    const filas = historial.map(h => `<tr><td>${h.fecha}</td><td>${h.accion}</td></tr>`).join("");
-    cont.innerHTML = `
-      <div class="panel">
-        <div class="panel-title">🕑 Historial de cambios</div>
-        ${historial.length ? `<table class="tabla"><thead><tr><th>Fecha</th><th>Acción</th></tr></thead><tbody>${filas}</tbody></table>` : '<p class="vacio">Todavía no hay movimientos.</p>'}
-      </div>`;
-  }
-  if(adminSubtab === "bracket"){
-    cont.innerHTML = `
-      <div class="panel">
-        <div class="panel-title">🏆 Inicializar / reiniciar bracket</div>
-        <p class="hint">Para inicializar el bracket con equipos reales, usa el endpoint <code>/api/admin/bracket/inicializar</code> con el JSON de los 16 partidos de Ronda de 32 (73-88). Aquí tienes un botón rápido para reiniciarlo si ya existe:</p>
-        <button class="btn danger" style="margin-top:10px;" onclick="reiniciarBracketAdmin()">🗑️ Reiniciar bracket completo</button>
-        <p class="hint" id="bk-admin-msg" style="margin-top:10px;"></p>
-      </div>`;
-  }
-  if(adminSubtab === "config"){
-    const reglas = await api("/api/configuracion/reglamento");
-    const filasPartido = reglas.por_partido.map(r => `<tr><td>${r.icono} ${r.regla}</td><td class="num"><b>${r.puntos}</b></td></tr>`).join("");
-    const filasPodio = reglas.podio.map(r => `<tr><td>${r.icono} ${r.regla}</td><td class="num"><b>${r.puntos}</b></td></tr>`).join("");
-    const filasPremios = reglas.premios.map(r => `<tr><td>${r.icono} ${r.regla}</td><td class="num"><b>${r.puntos}</b></td></tr>`).join("");
-    cont.innerHTML = `
-      <div class="panel">
-        <div class="panel-title">⚙️ Reglamento de puntos</div>
-        <p class="hint" style="margin-bottom:10px;">Por partido</p>
-        <table class="tabla">${filasPartido}</table>
-        <p class="hint" style="margin:16px 0 10px;">Podio (Campeón/Subcampeón/3°/4°)</p>
-        <table class="tabla">${filasPodio}</table>
-        <p class="hint" style="margin:16px 0 10px;">Premios individuales</p>
-        <table class="tabla">${filasPremios}</table>
-      </div>`;
-  }
-}
-async function guardarResultadoAdmin(){
-  const [el_, ev, fecha] = document.getElementById("reg-partido").value.split("|");
-  const gl = parseInt(document.getElementById("reg-gl").value, 10);
-  const gv = parseInt(document.getElementById("reg-gv").value, 10);
-  const msg = document.getElementById("reg-msg");
-  try{
-    await api("/api/admin/resultado", {method:"POST", body: JSON.stringify({equipo_local:el_, equipo_visitante:ev, fecha, gl, gv})});
-    msg.textContent = `✅ Guardado: ${el_} ${gl} - ${gv} ${ev}`;
-  }catch(e){ msg.textContent = "❌ Error: " + e.message; }
-}
-async function reiniciarBracketAdmin(){
-  if(!confirm("¿Seguro que quieres reiniciar todo el bracket?")) return;
-  await api("/api/admin/bracket", {method:"DELETE"});
-  document.getElementById("bk-admin-msg").textContent = "✅ Bracket reiniciado.";
-}
+      </div>
+    </div>
 
-/* ---------------- DESGLOSE DE ACIERTOS ---------------- */
-async function renderDesglose(){
-  const el = document.getElementById("desglose-cont");
-  el.innerHTML = `<div class="panel"><p class="hint">Cargando...</p></div>`;
-  try{
-    const partidos = await api("/api/partidos");
-    const conResultado = partidos.filter(p => p.tiene_resultado);
-    if(conResultado.length === 0){
-      el.innerHTML = `<div class="panel"><div class="panel-title">📈 Desgloses de Aciertos</div><p class="vacio">Todavía no hay partidos con resultado cargado.</p></div>`;
-      return;
-    }
-    const opciones = conResultado.map(p =>
-      `<option value="${p['Equipo local']}|${p['Equipo visitante']}|${p['Fecha']}">${p['Equipo local']} vs ${p['Equipo visitante']} (${p['Fecha']})</option>`
-    ).join("");
-    el.innerHTML = `
-      <div class="panel">
-        <div class="panel-title">📈 Desgloses de Aciertos</div>
-        <label class="hint">Selecciona el partido</label>
-        <select id="desglose-sel" onchange="cargarDesglose()" style="width:100%;max-width:480px;margin-top:6px;">${opciones}</select>
-        <div id="desglose-contenido"></div>
-      </div>`;
-    cargarDesglose();
-  }catch(e){
-    el.innerHTML = `<div class="panel"><p class="vacio">Error cargando desgloses: ${e.message}</p></div>`;
-  }
-}
-async function cargarDesglose(){
-  const [el_, ev, fecha] = document.getElementById("desglose-sel").value.split("|");
-  const cont = document.getElementById("desglose-contenido");
-  cont.innerHTML = `<p class="hint">Cargando...</p>`;
-  const data = await api(`/api/desglose?equipo_local=${encodeURIComponent(el_)}&equipo_visitante=${encodeURIComponent(ev)}&fecha=${encodeURIComponent(fecha)}`);
-  const r = data.resultado_real;
-  const banner = r ? `<div class="resultado-real-banner"><b>Resultado real:</b> ${r.equipo_local} ${r.gl} - ${r.gv} ${r.equipo_visitante}</div>` : "";
+  </section>
 
-  function tablaDe(lista){
-    if(!lista.length) return `<p class="vacio" style="padding:10px 0;">Nadie acertó esta categoría.</p>`;
-    const filas = lista.map(x => `<tr><td>${x.usuario}</td><td class="num"><b>${x.puntos}</b></td></tr>`).join("");
-    return `<table class="tabla"><thead><tr><th>Usuario</th><th class="num">Puntos</th></tr></thead><tbody>${filas}</tbody></table>`;
-  }
+  <!-- ===================== GRUPOS ===================== -->
+  <section class="tab-panel" id="tab-grupos" hidden>
+    <div class="card placeholder">
+      <h2>Grupos</h2>
+      <p>Próximamente: tablas por grupo (A–L).</p>
+    </div>
+  </section>
 
-  cont.innerHTML = `
-    ${banner}
-    <div class="desglose-grid">
-      <div class="desglose-col"><h4>🎯 Marcador exacto (6 pts)</h4>${tablaDe(data.marcador_exacto)}</div>
-      <div class="desglose-col"><h4>✅ Ganador/Empate sin exacto (3 pts)</h4>${tablaDe(data.ganador_empate)}</div>
-      <div class="desglose-col"><h4>🔢 Goles de un equipo (1 pt)</h4>${tablaDe(data.goles_un_equipo)}</div>
-    </div>`;
-}
+  <!-- ===================== ELIMINATORIA ===================== -->
+  <section class="tab-panel" id="tab-eliminatoria" hidden>
+    <div class="card placeholder">
+      <h2>Eliminatoria</h2>
+      <p>Próximamente: bracket de fase eliminatoria.</p>
+    </div>
+  </section>
 
-/* ---------------- INICIO ---------------- */
-actualizarBotonAdmin();
-renderPosiciones();
-</script>
+  <!-- ===================== PRONÓSTICOS ===================== -->
+  <section class="tab-panel" id="tab-pronosticos" hidden>
+    <div class="card placeholder">
+      <h2>Pronósticos</h2>
+      <p>Próximamente: formulario para registrar tus predicciones.</p>
+    </div>
+  </section>
+
+  <!-- ===================== PODIO ===================== -->
+  <section class="tab-panel" id="tab-podio" hidden>
+    <div class="card placeholder">
+      <h2>Podio final</h2>
+      <p>Próximamente: predicciones de podio y premios individuales.</p>
+    </div>
+  </section>
+
+  <!-- ===================== ADMIN ===================== -->
+  <section class="tab-panel" id="tab-admin" hidden>
+    <div class="card placeholder">
+      <h2>Panel de administración</h2>
+      <p>Acceso restringido. Inicia sesión como administrador.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Copa Mundial de la FIFA 2026 · Pronósticos de partidos
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
