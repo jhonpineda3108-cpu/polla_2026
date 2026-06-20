@@ -56,17 +56,32 @@ a {
 /* Header */
 .site-header {
   position: relative;
-  background: linear-gradient(180deg, rgba(0,3,10,.4), rgba(0,3,10,.92) 70%, var(--bg)), url("../assets/img/hero-background.jpg") center top / cover no-repeat;
-  padding: 24px 5vw 40px;
+}
+
+.hero-img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 .top-bar {
+  position: absolute;
+  top: 20px;
+  left: 5vw;
+  right: 5vw;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: .8rem;
   color: var(--text-muted);
-  margin-bottom: 24px;
+  z-index: 2;
+}
+
+.btn-login {
+  position: absolute;
+  top: 20px;
+  right: 5vw;
+  z-index: 3;
 }
 
 .sponsor {
@@ -130,23 +145,41 @@ a {
   color: var(--bg);
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+}
+
 /* Nav tabs */
 .nav-tabs {
   display: flex;
   gap: 4px;
-  margin-top: 28px;
+  margin: 0 5vw;
   border-bottom: 1px solid var(--border);
   overflow-x: auto;
 }
 
 .nav-tabs a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   padding: 12px 20px;
   text-transform: uppercase;
-  font-size: .9rem;
+  font-size: .85rem;
   letter-spacing: .05em;
   color: var(--text-muted);
   border-bottom: 2px solid transparent;
   white-space: nowrap;
+}
+
+.nav-tabs a img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  opacity: .8;
 }
 
 .nav-tabs a:hover {
@@ -167,17 +200,18 @@ main {
 }
 
 .card {
-  background: var(--bg-panel);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 24px;
+  background: rgba(255,255,255,.02);
+  border: 1px solid rgba(225,171,42,.4);
+  border-radius: 8px;
+  padding: 20px 24px;
 }
 
 .card h2 {
   margin: 0 0 20px;
-  font-size: 1.2rem;
+  font-size: 1rem;
   text-transform: uppercase;
   letter-spacing: .04em;
+  color: var(--gold-light);
 }
 
 /* Próximo partido */
@@ -185,6 +219,10 @@ main {
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.next-match h2 {
+  text-align: center;
 }
 
 .next-match-stats {
