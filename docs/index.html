@@ -385,15 +385,14 @@ async function renderPosiciones(){
   const el = document.getElementById("tab-posiciones");
   el.innerHTML = `
     <div class="resumen-row" id="resumen-row"><div class="panel"><p class="hint">Cargando...</p></div></div>
-    <div class="panel"><div class="panel-title">🏆 Tabla de posiciones</div><p class="hint">Cargando...</p></div>`;
+    <div id="tabla-posiciones-cont"><div class="panel"><div class="panel-title">🏆 Tabla de posiciones</div><p class="hint">Cargando...</p></div></div>`;
   renderResumen();
+
+  const cont = document.getElementById("tabla-posiciones-cont");
   try{
     const tabla = await api("/api/posiciones");
     if(tabla.length === 0){
-      document.getElementById("tab-posiciones").innerHTML = `
-        <div class="resumen-row" id="resumen-row"></div>
-        <div class="panel"><div class="panel-title">🏆 Tabla de posiciones</div><p class="vacio">Todavía no hay resultados cargados.</p></div>`;
-      renderResumen();
+      cont.innerHTML = `<div class="panel"><div class="panel-title">🏆 Tabla de posiciones</div><p class="vacio">Todavía no hay resultados cargados.</p></div>`;
       return;
     }
     const filas = tabla.map(r => `
@@ -408,8 +407,7 @@ async function renderPosiciones(){
         <td class="num">${r.pts_premios}</td>
         <td class="num"><b>${r.pts}</b></td>
       </tr>`).join("");
-    document.getElementById("tab-posiciones").innerHTML = `
-      <div class="resumen-row" id="resumen-row"></div>
+    cont.innerHTML = `
       <div class="panel">
         <div class="panel-title">🏆 Tabla de posiciones acumulada</div>
         <table class="tabla">
@@ -418,10 +416,7 @@ async function renderPosiciones(){
         </table>
       </div>`;
   }catch(e){
-    document.getElementById("tab-posiciones").innerHTML = `
-      <div class="resumen-row" id="resumen-row"></div>
-      <div class="panel"><p class="vacio">Error cargando posiciones: ${e.message}</p></div>`;
-    renderResumen();
+    cont.innerHTML = `<div class="panel"><p class="vacio">Error cargando posiciones: ${e.message}</p></div>`;
   }
 }
 
