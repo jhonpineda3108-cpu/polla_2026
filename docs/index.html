@@ -38,26 +38,38 @@
   <!-- ===================== POSICIONES ===================== -->
   <section class="tab-panel" id="tab-posiciones">
 
-    <div class="card next-match">
-      <h2>Próximo partido</h2>
-      <div class="next-match-stats">
-        <div><strong id="statParticipantes">52</strong>Participantes</div>
-        <div><strong id="statPartidos">30</strong>Partidos</div>
-        <div><strong id="statFase">Fase de grupos</strong></div>
+    <div class="match-and-stats">
+      <div class="card next-match">
+        <h2>Próximo partido</h2>
+        <div class="match-row">
+          <div class="team">
+            <img src="assets/img/banderas/colombia.jpg" alt="Colombia">
+            <span>Colombia</span>
+          </div>
+          <div class="match-center">
+            <div class="date" id="matchDate">Jun 11</div>
+            <div class="vs">vs</div>
+            <div class="time" id="matchTime">18:00</div>
+          </div>
+          <div class="team">
+            <img src="assets/img/banderas/argentina.jpg" alt="Argentina">
+            <span>Argentina</span>
+          </div>
+        </div>
       </div>
-      <div class="match-row">
-        <div class="team">
-          <img src="assets/img/banderas/colombia.jpg" alt="Colombia">
-          <span>Colombia</span>
+
+      <div class="card stats-card">
+        <div class="stat-row">
+          <img src="assets/img/iconos/account_circle_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.png" alt="">
+          <div><strong id="statParticipantes">52</strong><span>Participantes</span></div>
         </div>
-        <div class="match-center">
-          <div class="date" id="matchDate">Jun 11</div>
-          <div class="vs">vs</div>
-          <div class="time" id="matchTime">18:00</div>
+        <div class="stat-row">
+          <img src="assets/img/iconos/sports_soccer_22dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.png" alt="">
+          <div><strong id="statPartidos">30</strong><span>Partidos</span></div>
         </div>
-        <div class="team">
-          <img src="assets/img/banderas/argentina.jpg" alt="Argentina">
-          <span>Argentina</span>
+        <div class="stat-row">
+          <img src="assets/img/iconos/calendar_month_22dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.png" alt="">
+          <div><strong id="statFase">Fase de grupos</strong></div>
         </div>
       </div>
     </div>
