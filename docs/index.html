@@ -6,16 +6,16 @@
 <title>La Quiniela Mundial Hub</title>
 <style>
   :root{
-    --bg:#070d1a;
-    --bg-2:#0c1830;
+    --bg:#00030a;
+    --bg-2:#0a1020;
     --panel:rgba(255,255,255,0.04);
     --panel-strong:rgba(255,255,255,0.07);
-    --border:rgba(255,255,255,0.10);
-    --gold:#f0b429;
-    --gold-light:#ffd866;
-    --teal:#2dd4bf;
-    --text:#eaf2ff;
-    --text-dim:#8fb3e0;
+    --border:rgba(212,175,55,0.18);
+    --gold:#d4a017;
+    --gold-light:#f3cf6b;
+    --teal:#d4a017;
+    --text:#f5f1e8;
+    --text-dim:#9a958a;
     --danger:#e25a5a;
     --radius:14px;
   }
@@ -23,41 +23,41 @@
   body{
     margin:0;
     font-family:'Inter','Segoe UI',Arial,sans-serif;
-    background:radial-gradient(circle at top, var(--bg-2) 0%, var(--bg) 65%);
+    background:var(--bg);
     color:var(--text);
     min-height:100vh;
   }
-  .app{ max-width:1180px; margin:0 auto; padding:28px 20px 60px; }
+  .app{ max-width:1180px; margin:0 auto; padding:0 20px 60px; }
 
   header.hero{
-    display:flex; align-items:center; justify-content:space-between;
-    margin-bottom:28px; flex-wrap:wrap; gap:14px;
+    width:100%;
+    aspect-ratio:1366/668;
+    background-image:url('assets/images/header-mundial.jpg');
+    background-size:cover;
+    background-position:top center;
+    position:relative;
+    margin-bottom:0;
   }
-  header.hero .title{ display:flex; align-items:center; gap:14px; }
-  header.hero .title .badge{
-    width:44px; height:44px; border-radius:12px;
-    background:linear-gradient(135deg, var(--gold), #c97f00);
-    display:flex; align-items:center; justify-content:center;
-    font-size:22px;
-  }
-  header.hero h1{ font-size:21px; margin:0; letter-spacing:.2px; }
-  header.hero .sub{ color:var(--teal); font-size:12px; font-weight:600; letter-spacing:.5px; text-transform:uppercase; }
-
   #admin-btn{
-    background:var(--panel-strong); border:1px solid var(--border); color:var(--text);
-    padding:9px 16px; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer;
+    position:absolute;
+    top:38px; right:24px;
+    background:linear-gradient(135deg, var(--gold-light), var(--gold));
+    border:none; color:#1a1300;
+    padding:10px 20px; border-radius:24px; font-size:13px; font-weight:800; cursor:pointer;
+    display:flex; align-items:center; gap:6px;
+    box-shadow:0 4px 14px rgba(212,160,23,0.35);
   }
-  #admin-btn:hover{ background:rgba(255,255,255,0.12); }
-  #admin-btn.activo{ background:rgba(240,180,41,0.18); border-color:rgba(240,180,41,0.5); color:var(--gold-light); }
+  #admin-btn:hover{ filter:brightness(1.06); }
+  #admin-btn.activo{ background:linear-gradient(135deg, #6be09a, #2fae6b); color:#06210f; }
 
   nav.tabs{
-    display:flex; gap:6px; margin-bottom:24px; border-bottom:1px solid var(--border);
-    overflow-x:auto;
+    display:flex; gap:4px; margin:18px 0 24px; border-bottom:1px solid var(--border);
+    overflow-x:auto; padding-bottom:0;
   }
   nav.tabs button{
     background:none; border:none; color:var(--text-dim); padding:12px 18px;
-    font-size:14px; font-weight:600; cursor:pointer; border-bottom:2px solid transparent;
-    white-space:nowrap;
+    font-size:13.5px; font-weight:700; cursor:pointer; border-bottom:2px solid transparent;
+    white-space:nowrap; display:flex; align-items:center; gap:7px; text-transform:uppercase; letter-spacing:.3px;
   }
   nav.tabs button.activo{ color:var(--gold-light); border-bottom-color:var(--gold); }
   nav.tabs button:hover{ color:var(--text); }
@@ -177,35 +177,60 @@
   .form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; max-width:480px; }
   .form-grid label{ font-size:12px; color:var(--text-dim); display:block; margin-bottom:5px; }
   .form-grid input, .form-grid select{ width:100%; }
+
+  /* ---------------- DESGLOSE DE ACIERTOS ---------------- */
+  .desglose-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px; margin-top:18px; }
+  .desglose-col h4{
+    font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.5px;
+    margin:0 0 10px; font-weight:700;
+  }
+  .resultado-real-banner{
+    background:var(--panel-strong); border:1px solid var(--border); border-radius:10px;
+    padding:12px 16px; margin:14px 0 4px; font-size:14px;
+  }
+
+  /* ---------------- PRÓXIMO PARTIDO + RESUMEN ---------------- */
+  .resumen-row{ display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-bottom:20px; }
+  @media (max-width:760px){ .resumen-row{ grid-template-columns:1fr; } }
+  .proximo-panel{ text-align:center; }
+  .proximo-panel .titulo-mini{
+    color:var(--gold-light); font-weight:800; font-size:13px; text-transform:uppercase;
+    letter-spacing:.8px; margin-bottom:18px; padding-bottom:10px; border-bottom:1px solid var(--border);
+  }
+  .vs-row{ display:flex; align-items:center; justify-content:center; gap:36px; }
+  .vs-equipo{ display:flex; flex-direction:column; align-items:center; gap:8px; min-width:90px; }
+  .vs-equipo img{ width:56px; height:40px; object-fit:cover; border-radius:6px; box-shadow:0 0 0 1px var(--border); }
+  .vs-equipo span{ font-weight:700; font-size:14px; }
+  .vs-centro{ text-align:center; }
+  .vs-centro .fecha{ font-size:12px; color:var(--text-dim); margin-bottom:2px; }
+  .vs-centro .vs{ font-size:22px; font-weight:900; color:var(--gold-light); letter-spacing:1px; }
+  .stat-list{ display:flex; flex-direction:column; gap:14px; justify-content:center; height:100%; }
+  .stat-item{ display:flex; align-items:center; gap:12px; font-size:14px; }
+  .stat-item .num{ font-weight:800; color:var(--gold-light); font-size:16px; }
 </style>
 </head>
 <body>
 
-<div class="app">
-  <header class="hero">
-    <div class="title">
-      <div class="badge">⚽</div>
-      <div>
-        <h1>La Quiniela Mundial Hub</h1>
-        <div class="sub">Mundial 2026</div>
-      </div>
-    </div>
-    <button id="admin-btn" onclick="abrirModalAdmin()">🔒 Admin</button>
-  </header>
+<header class="hero">
+  <button id="admin-btn" onclick="abrirModalAdmin()">🛡️ Login</button>
+</header>
 
+<div class="app">
   <nav class="tabs">
-    <button data-tab="posiciones" class="activo">🏆 Posiciones</button>
-    <button data-tab="grupos">⚽ Grupos</button>
+    <button data-tab="posiciones" class="activo">📅 Posiciones</button>
+    <button data-tab="grupos">▦ Grupos</button>
     <button data-tab="bracket">🏆 Eliminatoria</button>
-    <button data-tab="pronosticos">🔮 Pronósticos</button>
-    <button data-tab="podio">🥇 Podio y premios</button>
-    <button data-tab="admin" id="tab-btn-admin" style="display:none;">🔓 Admin</button>
+    <button data-tab="pronosticos">⇄ Pronósticos</button>
+    <button data-tab="desglose">📈 Desgloses</button>
+    <button data-tab="podio">🥇 Podio</button>
+    <button data-tab="admin" id="tab-btn-admin" style="display:none;">🛡️ Admin</button>
   </nav>
 
   <section id="tab-posiciones"></section>
   <section id="tab-grupos" style="display:none"></section>
   <section id="tab-bracket" style="display:none"></section>
   <section id="tab-pronosticos" style="display:none"></section>
+  <section id="tab-desglose" style="display:none"></section>
   <section id="tab-podio" style="display:none"></section>
   <section id="tab-admin" style="display:none"></section>
 
@@ -228,7 +253,7 @@
 /* ----------------------------------------------------------------------
    CONFIG: apunta esto a la URL real de tu backend cuando lo despliegues
 ---------------------------------------------------------------------- */
-const API_BASE = window.API_BASE || "https://polla-2026.onrender.com";
+const API_BASE = window.API_BASE || "http://localhost:8000";
 
 let adminPassword = sessionStorage.getItem("admin_pass") || null;
 
@@ -270,13 +295,14 @@ document.querySelectorAll("nav.tabs button").forEach(btn => {
 });
 function irATab(tab){
   document.querySelectorAll("nav.tabs button").forEach(b => b.classList.toggle("activo", b.dataset.tab === tab));
-  ["posiciones","grupos","bracket","pronosticos","podio","admin"].forEach(t => {
+  ["posiciones","grupos","bracket","pronosticos","desglose","podio","admin"].forEach(t => {
     document.getElementById(`tab-${t}`).style.display = (t === tab) ? "block" : "none";
   });
   if(tab === "posiciones") renderPosiciones();
   if(tab === "grupos") renderGrupos();
   if(tab === "bracket") renderBracket();
   if(tab === "pronosticos") renderPronosticos();
+  if(tab === "desglose") renderDesglose();
   if(tab === "podio") renderPodio();
   if(tab === "admin") renderAdmin();
 }
@@ -319,13 +345,55 @@ function actualizarBotonAdmin(){
 }
 
 /* ---------------- POSICIONES ---------------- */
+async function renderResumen(){
+  try{
+    const r = await api("/api/resumen");
+    let proximoHtml;
+    if(r.proximo_partido){
+      const p = r.proximo_partido;
+      proximoHtml = `
+        <div class="panel proximo-panel">
+          <div class="titulo-mini">Próximo partido</div>
+          <div class="vs-row">
+            <div class="vs-equipo">${equipoHtml(p.equipo_local).replace('equipo-cell','equipo-cell').replace('<img','<img style="width:56px;height:40px;"')}<span>${p.equipo_local}</span></div>
+            <div class="vs-centro"><div class="fecha">${p.fecha}</div><div class="vs">VS</div></div>
+            <div class="vs-equipo">${equipoHtml(p.equipo_visitante).replace('<img','<img style="width:56px;height:40px;"')}<span>${p.equipo_visitante}</span></div>
+          </div>
+        </div>`;
+    }else{
+      proximoHtml = `
+        <div class="panel proximo-panel">
+          <div class="titulo-mini">Próximo partido</div>
+          <p class="vacio">No hay partidos pendientes por jugar.</p>
+        </div>`;
+    }
+    const statsHtml = `
+      <div class="panel">
+        <div class="stat-list">
+          <div class="stat-item">👤 <span class="num">${r.participantes}</span> participantes</div>
+          <div class="stat-item">⚽ <span class="num">${r.partidos_totales}</span> partidos</div>
+          <div class="stat-item">📅 <span class="num">${r.partidos_jugados}</span> jugados</div>
+        </div>
+      </div>`;
+    document.getElementById("resumen-row").innerHTML = proximoHtml + statsHtml;
+  }catch(e){
+    document.getElementById("resumen-row").innerHTML = `<div class="panel"><p class="vacio">No se pudo cargar el resumen.</p></div>`;
+  }
+}
+
 async function renderPosiciones(){
   const el = document.getElementById("tab-posiciones");
-  el.innerHTML = `<div class="panel"><div class="panel-title">🏆 Tabla de posiciones</div><p class="hint">Cargando...</p></div>`;
+  el.innerHTML = `
+    <div class="resumen-row" id="resumen-row"><div class="panel"><p class="hint">Cargando...</p></div></div>
+    <div class="panel"><div class="panel-title">🏆 Tabla de posiciones</div><p class="hint">Cargando...</p></div>`;
+  renderResumen();
   try{
     const tabla = await api("/api/posiciones");
     if(tabla.length === 0){
-      el.innerHTML = `<div class="panel"><div class="panel-title">🏆 Tabla de posiciones</div><p class="vacio">Todavía no hay resultados cargados.</p></div>`;
+      document.getElementById("tab-posiciones").innerHTML = `
+        <div class="resumen-row" id="resumen-row"></div>
+        <div class="panel"><div class="panel-title">🏆 Tabla de posiciones</div><p class="vacio">Todavía no hay resultados cargados.</p></div>`;
+      renderResumen();
       return;
     }
     const filas = tabla.map(r => `
@@ -340,7 +408,8 @@ async function renderPosiciones(){
         <td class="num">${r.pts_premios}</td>
         <td class="num"><b>${r.pts}</b></td>
       </tr>`).join("");
-    el.innerHTML = `
+    document.getElementById("tab-posiciones").innerHTML = `
+      <div class="resumen-row" id="resumen-row"></div>
       <div class="panel">
         <div class="panel-title">🏆 Tabla de posiciones acumulada</div>
         <table class="tabla">
@@ -349,7 +418,10 @@ async function renderPosiciones(){
         </table>
       </div>`;
   }catch(e){
-    el.innerHTML = `<div class="panel"><p class="vacio">Error cargando posiciones: ${e.message}</p></div>`;
+    document.getElementById("tab-posiciones").innerHTML = `
+      <div class="resumen-row" id="resumen-row"></div>
+      <div class="panel"><p class="vacio">Error cargando posiciones: ${e.message}</p></div>`;
+    renderResumen();
   }
 }
 
@@ -658,6 +730,55 @@ async function reiniciarBracketAdmin(){
   if(!confirm("¿Seguro que quieres reiniciar todo el bracket?")) return;
   await api("/api/admin/bracket", {method:"DELETE"});
   document.getElementById("bk-admin-msg").textContent = "✅ Bracket reiniciado.";
+}
+
+/* ---------------- DESGLOSE DE ACIERTOS ---------------- */
+async function renderDesglose(){
+  const el = document.getElementById("tab-desglose");
+  el.innerHTML = `<div class="panel"><p class="hint">Cargando...</p></div>`;
+  try{
+    const partidos = await api("/api/partidos");
+    const conResultado = partidos.filter(p => p.tiene_resultado);
+    if(conResultado.length === 0){
+      el.innerHTML = `<div class="panel"><div class="panel-title">📈 Desgloses de Aciertos</div><p class="vacio">Todavía no hay partidos con resultado cargado.</p></div>`;
+      return;
+    }
+    const opciones = conResultado.map(p =>
+      `<option value="${p['Equipo local']}|${p['Equipo visitante']}|${p['Fecha']}">${p['Equipo local']} vs ${p['Equipo visitante']} (${p['Fecha']})</option>`
+    ).join("");
+    el.innerHTML = `
+      <div class="panel">
+        <div class="panel-title">📈 Desgloses de Aciertos</div>
+        <label class="hint">Selecciona el partido</label>
+        <select id="desglose-sel" onchange="cargarDesglose()" style="width:100%;max-width:480px;margin-top:6px;">${opciones}</select>
+        <div id="desglose-contenido"></div>
+      </div>`;
+    cargarDesglose();
+  }catch(e){
+    el.innerHTML = `<div class="panel"><p class="vacio">Error cargando desgloses: ${e.message}</p></div>`;
+  }
+}
+async function cargarDesglose(){
+  const [el_, ev, fecha] = document.getElementById("desglose-sel").value.split("|");
+  const cont = document.getElementById("desglose-contenido");
+  cont.innerHTML = `<p class="hint">Cargando...</p>`;
+  const data = await api(`/api/desglose?equipo_local=${encodeURIComponent(el_)}&equipo_visitante=${encodeURIComponent(ev)}&fecha=${encodeURIComponent(fecha)}`);
+  const r = data.resultado_real;
+  const banner = r ? `<div class="resultado-real-banner"><b>Resultado real:</b> ${r.equipo_local} ${r.gl} - ${r.gv} ${r.equipo_visitante}</div>` : "";
+
+  function tablaDe(lista){
+    if(!lista.length) return `<p class="vacio" style="padding:10px 0;">Nadie acertó esta categoría.</p>`;
+    const filas = lista.map(x => `<tr><td>${x.usuario}</td><td class="num"><b>${x.puntos}</b></td></tr>`).join("");
+    return `<table class="tabla"><thead><tr><th>Usuario</th><th class="num">Puntos</th></tr></thead><tbody>${filas}</tbody></table>`;
+  }
+
+  cont.innerHTML = `
+    ${banner}
+    <div class="desglose-grid">
+      <div class="desglose-col"><h4>🎯 Marcador exacto (6 pts)</h4>${tablaDe(data.marcador_exacto)}</div>
+      <div class="desglose-col"><h4>✅ Ganador/Empate sin exacto (3 pts)</h4>${tablaDe(data.ganador_empate)}</div>
+      <div class="desglose-col"><h4>🔢 Goles de un equipo (1 pt)</h4>${tablaDe(data.goles_un_equipo)}</div>
+    </div>`;
 }
 
 /* ---------------- INICIO ---------------- */
