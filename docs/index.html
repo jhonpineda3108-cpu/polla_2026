@@ -94,6 +94,10 @@
     background:rgba(255,255,255,0.06); border:1px solid var(--border); color:var(--text);
     padding:9px 12px; border-radius:9px; font-size:13.5px; font-family:inherit;
   }
+  select{ -webkit-appearance:none; -moz-appearance:none; appearance:none; cursor:pointer; }
+  select option{
+    background:#13182a; color:var(--text); padding:8px;
+  }
   select:focus, input:focus{ outline:none; border-color:var(--teal); }
   button.btn{
     background:linear-gradient(135deg, var(--gold), #c97f00); color:#1a1300; border:none;
@@ -221,7 +225,6 @@
     <button data-tab="grupos">▦ Grupos</button>
     <button data-tab="bracket">🏆 Eliminatoria</button>
     <button data-tab="pronosticos">⇄ Pronósticos</button>
-    <button data-tab="desglose">📈 Desgloses</button>
     <button data-tab="podio">🥇 Podio</button>
     <button data-tab="admin" id="tab-btn-admin" style="display:none;">🛡️ Admin</button>
   </nav>
@@ -230,7 +233,6 @@
   <section id="tab-grupos" style="display:none"></section>
   <section id="tab-bracket" style="display:none"></section>
   <section id="tab-pronosticos" style="display:none"></section>
-  <section id="tab-desglose" style="display:none"></section>
   <section id="tab-podio" style="display:none"></section>
   <section id="tab-admin" style="display:none"></section>
 
@@ -295,14 +297,13 @@ document.querySelectorAll("nav.tabs button").forEach(btn => {
 });
 function irATab(tab){
   document.querySelectorAll("nav.tabs button").forEach(b => b.classList.toggle("activo", b.dataset.tab === tab));
-  ["posiciones","grupos","bracket","pronosticos","desglose","podio","admin"].forEach(t => {
+  ["posiciones","grupos","bracket","pronosticos","podio","admin"].forEach(t => {
     document.getElementById(`tab-${t}`).style.display = (t === tab) ? "block" : "none";
   });
   if(tab === "posiciones") renderPosiciones();
   if(tab === "grupos") renderGrupos();
   if(tab === "bracket") renderBracket();
   if(tab === "pronosticos") renderPronosticos();
-  if(tab === "desglose") renderDesglose();
   if(tab === "podio") renderPodio();
   if(tab === "admin") renderAdmin();
 }
@@ -351,13 +352,15 @@ async function renderResumen(){
     let proximoHtml;
     if(r.proximo_partido){
       const p = r.proximo_partido;
+      const banderaLocal = banderaUrl(p.equipo_local);
+      const banderaVisit = banderaUrl(p.equipo_visitante);
       proximoHtml = `
         <div class="panel proximo-panel">
           <div class="titulo-mini">Próximo partido</div>
           <div class="vs-row">
-            <div class="vs-equipo">${equipoHtml(p.equipo_local).replace('equipo-cell','equipo-cell').replace('<img','<img style="width:56px;height:40px;"')}<span>${p.equipo_local}</span></div>
+            <div class="vs-equipo">${banderaLocal?`<img src="${banderaLocal}">`:""}<span>${p.equipo_local}</span></div>
             <div class="vs-centro"><div class="fecha">${p.fecha}</div><div class="vs">VS</div></div>
-            <div class="vs-equipo">${equipoHtml(p.equipo_visitante).replace('<img','<img style="width:56px;height:40px;"')}<span>${p.equipo_visitante}</span></div>
+            <div class="vs-equipo">${banderaVisit?`<img src="${banderaVisit}">`:""}<span>${p.equipo_visitante}</span></div>
           </div>
         </div>`;
     }else{
@@ -385,8 +388,10 @@ async function renderPosiciones(){
   const el = document.getElementById("tab-posiciones");
   el.innerHTML = `
     <div class="resumen-row" id="resumen-row"><div class="panel"><p class="hint">Cargando...</p></div></div>
-    <div id="tabla-posiciones-cont"><div class="panel"><div class="panel-title">🏆 Tabla de posiciones</div><p class="hint">Cargando...</p></div></div>`;
+    <div id="tabla-posiciones-cont"><div class="panel"><div class="panel-title">🏆 Tabla de posiciones</div><p class="hint">Cargando...</p></div></div>
+    <div id="desglose-cont"></div>`;
   renderResumen();
+  renderDesglose();
 
   const cont = document.getElementById("tabla-posiciones-cont");
   try{
@@ -729,7 +734,7 @@ async function reiniciarBracketAdmin(){
 
 /* ---------------- DESGLOSE DE ACIERTOS ---------------- */
 async function renderDesglose(){
-  const el = document.getElementById("tab-desglose");
+  const el = document.getElementById("desglose-cont");
   el.innerHTML = `<div class="panel"><p class="hint">Cargando...</p></div>`;
   try{
     const partidos = await api("/api/partidos");
