@@ -1,1 +1,404 @@
+@font-face {
+  font-family: "World";
+  src: url("../assets/fonts/WORLD.woff2") format("woff2"),
+       url("../assets/fonts/WORLD.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
 
+@font-face {
+  font-family: "World Condensed";
+  src: url("../assets/fonts/WORLD-Condensed.woff2") format("woff2"),
+       url("../assets/fonts/WORLD-Condensed.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root {
+  --bg: #00030a;
+  --bg-panel: #0a0f1c;
+  --bg-panel-light: #111729;
+  --gold: #e1ab2a;
+  --gold-light: #ffea9c;
+  --gold-dark: #5f4811;
+  --text: #f5f5f5;
+  --text-muted: #9d9d9d;
+  --border: #1c2333;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "World Condensed", "Arial Narrow", sans-serif;
+}
+
+h1, h2, h3, .brand, .nav-tabs a {
+  font-family: "World", "Arial", sans-serif;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.gold-text {
+  background: linear-gradient(180deg, var(--gold-light), var(--gold) 60%, var(--gold-dark));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Header */
+.site-header {
+  position: relative;
+  background: linear-gradient(180deg, rgba(0,3,10,.4), rgba(0,3,10,.92) 70%, var(--bg)), url("../assets/img/hero-background.jpg") center top / cover no-repeat;
+  padding: 24px 5vw 40px;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: .8rem;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+.sponsor {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.sponsor strong {
+  color: var(--gold-light);
+}
+
+.author {
+  text-align: right;
+}
+
+.author .year {
+  display: block;
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+.author .year.gold-text { font-family: "World"; }
+
+.brand-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.title-block .eyebrow {
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text-muted);
+  font-size: .9rem;
+  margin: 0 0 4px;
+}
+
+.title-block h1 {
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.btn-login {
+  border: 1px solid var(--gold);
+  color: var(--gold-light);
+  padding: 10px 28px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-size: .9rem;
+  transition: background .2s, color .2s;
+}
+
+.btn-login:hover {
+  background: var(--gold);
+  color: var(--bg);
+}
+
+/* Nav tabs */
+.nav-tabs {
+  display: flex;
+  gap: 4px;
+  margin-top: 28px;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.nav-tabs a {
+  padding: 12px 20px;
+  text-transform: uppercase;
+  font-size: .9rem;
+  letter-spacing: .05em;
+  color: var(--text-muted);
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+}
+
+.nav-tabs a:hover {
+  color: var(--text);
+}
+
+.nav-tabs a.active {
+  color: var(--gold-light);
+  border-bottom-color: var(--gold);
+}
+
+/* Main */
+main {
+  padding: 32px 5vw 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px;
+}
+
+.card h2 {
+  margin: 0 0 20px;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+/* Próximo partido */
+.next-match {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.next-match-stats {
+  display: flex;
+  gap: 32px;
+  font-size: .85rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.next-match-stats strong {
+  display: block;
+  color: var(--gold-light);
+  font-size: 1.4rem;
+  font-family: "World";
+}
+
+.match-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  padding: 16px 0;
+}
+
+.team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 140px;
+}
+
+.team img {
+  width: 84px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+.team span {
+  text-transform: uppercase;
+  font-size: .95rem;
+}
+
+.match-center {
+  text-align: center;
+}
+
+.match-center .vs {
+  font-size: 1rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.match-center .time {
+  font-family: "World";
+  font-size: 2rem;
+  color: var(--gold-light);
+}
+
+.match-center .date {
+  font-size: .8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+}
+
+thead th {
+  text-align: center;
+  text-transform: uppercase;
+  font-size: .75rem;
+  letter-spacing: .04em;
+  color: var(--gold-light);
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+thead th:first-child,
+tbody td:first-child {
+  text-align: left;
+}
+
+tbody td {
+  text-align: center;
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+tbody tr:hover {
+  background: var(--bg-panel-light);
+}
+
+.pts {
+  color: var(--gold-light);
+  font-weight: bold;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+/* Desglose de aciertos */
+.breakdown-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  font-size: .9rem;
+}
+
+.breakdown-header .result {
+  color: var(--gold-light);
+}
+
+.breakdown-rules {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.breakdown-rules div {
+  background: var(--bg-panel-light);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-size: .8rem;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.breakdown-rules strong {
+  display: block;
+  color: var(--gold-light);
+  font-size: .95rem;
+}
+
+.breakdown-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+.breakdown-columns table {
+  font-size: .82rem;
+}
+
+/* Stub pages */
+.placeholder {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--text-muted);
+}
+
+.placeholder h2 {
+  color: var(--gold-light);
+  font-size: 1.6rem;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-muted);
+  font-size: .8rem;
+  border-top: 1px solid var(--border);
+}
+
+/* --- Funcional: SPA tabs, login button, select --- */
+
+.author .by {
+  display: block;
+  font-size: .8rem;
+  color: var(--text-muted);
+}
+
+.btn-login {
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.tab-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.tab-panel[hidden] {
+  display: none;
+}
+
+.breakdown-header select {
+  background: var(--bg-panel-light);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: .85rem;
+}
+
+.breakdown-header select:focus,
+.btn-login:focus-visible,
+.nav-tabs a:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
