@@ -634,6 +634,52 @@ def guardar_final(rf: ResultadoFinal, x_admin_password: Optional[str] = Header(N
     return {"ok": True}
 
 
+def aciertos_de_un_partido(preds_df, resultados_reales, clave):
+    """
+    Para un partido YA con resultado real cargado, devuelve 3 listas
+    (Marcador exacto, Ganador/Empate sin exacto, Goles de un equipo) con
+    quién acertó esa categoría en ESE partido puntual.
+    """
+    vacio = {"marcador_exacto": [], "ganador_empate": [], "goles_un_equipo": [], "resultado_real": None}
+    if clave not in resultados_reales:
+        return vacio
+
+    real = resultados_reales[clave]
+    equipo_local, equipo_visit, fecha = real["equipo_local"], real["equipo_visitante"], real["fecha"]
+
+    filas_partido = preds_df[
+        (preds_df["Equipo local"] == equipo_local) &
+        (preds_df["Equipo visitante"] == equipo_visit) &
+        (preds_df["Fecha"] == fecha)
+    ]
+
+    categorias = {"Marcador exacto": [], "Ganador/Empate sin exacto": [], "Goles de un equipo": []}
+    valor_categoria = {"Marcador exacto": 6, "Ganador/Empate sin exacto": 3, "Goles de un equipo": 1}
+
+    for _, fila in filas_partido.iterrows():
+        categoria, _ = calcular_categoria(
+            int(fila["Goles local"]), int(fila["Goles visitante"]),
+            int(real["gl"]), int(real["gv"])
+        )
+        if categoria in categorias:
+            categorias[categoria].append(fila["Persona"])
+
+    return {
+        "marcador_exacto": [{"usuario": u, "puntos": valor_categoria["Marcador exacto"]} for u in categorias["Marcador exacto"]],
+        "ganador_empate": [{"usuario": u, "puntos": valor_categoria["Ganador/Empate sin exacto"]} for u in categorias["Ganador/Empate sin exacto"]],
+        "goles_un_equipo": [{"usuario": u, "puntos": valor_categoria["Goles de un equipo"]} for u in categorias["Goles de un equipo"]],
+        "resultado_real": {"equipo_local": equipo_local, "equipo_visitante": equipo_visit, "gl": real["gl"], "gv": real["gv"], "fecha": fecha},
+    }
+
+
+@app.get("/api/desglose")
+def desglose_partido(equipo_local: str, equipo_visitante: str, fecha: str):
+    preds_df, _, _, _ = get_datos()
+    resultados_reales = cargar_resultados()
+    clave = f"{equipo_local}|{equipo_visitante}|{fecha}"
+    return aciertos_de_un_partido(preds_df, resultados_reales, clave)
+
+
 @app.get("/api/health")
 def health():
     return {"status": "ok"}
