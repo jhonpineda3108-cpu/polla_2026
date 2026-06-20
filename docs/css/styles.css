@@ -61,7 +61,9 @@ a {
 .hero-img {
   display: block;
   width: 100%;
-  height: auto;
+  height: 420px;
+  object-fit: cover;
+  object-position: top;
 }
 
 .top-bar {
