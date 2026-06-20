@@ -177,6 +177,17 @@
   .form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; max-width:480px; }
   .form-grid label{ font-size:12px; color:var(--text-dim); display:block; margin-bottom:5px; }
   .form-grid input, .form-grid select{ width:100%; }
+
+  /* ---------------- DESGLOSE DE ACIERTOS ---------------- */
+  .desglose-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px; margin-top:18px; }
+  .desglose-col h4{
+    font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.5px;
+    margin:0 0 10px; font-weight:700;
+  }
+  .resultado-real-banner{
+    background:var(--panel-strong); border:1px solid var(--border); border-radius:10px;
+    padding:12px 16px; margin:14px 0 4px; font-size:14px;
+  }
 </style>
 </head>
 <body>
@@ -198,6 +209,7 @@
     <button data-tab="grupos">⚽ Grupos</button>
     <button data-tab="bracket">🏆 Eliminatoria</button>
     <button data-tab="pronosticos">🔮 Pronósticos</button>
+    <button data-tab="desglose">📈 Desgloses</button>
     <button data-tab="podio">🥇 Podio y premios</button>
     <button data-tab="admin" id="tab-btn-admin" style="display:none;">🔓 Admin</button>
   </nav>
@@ -206,6 +218,7 @@
   <section id="tab-grupos" style="display:none"></section>
   <section id="tab-bracket" style="display:none"></section>
   <section id="tab-pronosticos" style="display:none"></section>
+  <section id="tab-desglose" style="display:none"></section>
   <section id="tab-podio" style="display:none"></section>
   <section id="tab-admin" style="display:none"></section>
 
@@ -228,7 +241,7 @@
 /* ----------------------------------------------------------------------
    CONFIG: apunta esto a la URL real de tu backend cuando lo despliegues
 ---------------------------------------------------------------------- */
-const API_BASE = window.API_BASE || "https://polla-2026.onrender.com";
+const API_BASE = window.API_BASE || "http://localhost:8000";
 
 let adminPassword = sessionStorage.getItem("admin_pass") || null;
 
@@ -270,13 +283,14 @@ document.querySelectorAll("nav.tabs button").forEach(btn => {
 });
 function irATab(tab){
   document.querySelectorAll("nav.tabs button").forEach(b => b.classList.toggle("activo", b.dataset.tab === tab));
-  ["posiciones","grupos","bracket","pronosticos","podio","admin"].forEach(t => {
+  ["posiciones","grupos","bracket","pronosticos","desglose","podio","admin"].forEach(t => {
     document.getElementById(`tab-${t}`).style.display = (t === tab) ? "block" : "none";
   });
   if(tab === "posiciones") renderPosiciones();
   if(tab === "grupos") renderGrupos();
   if(tab === "bracket") renderBracket();
   if(tab === "pronosticos") renderPronosticos();
+  if(tab === "desglose") renderDesglose();
   if(tab === "podio") renderPodio();
   if(tab === "admin") renderAdmin();
 }
@@ -658,6 +672,55 @@ async function reiniciarBracketAdmin(){
   if(!confirm("¿Seguro que quieres reiniciar todo el bracket?")) return;
   await api("/api/admin/bracket", {method:"DELETE"});
   document.getElementById("bk-admin-msg").textContent = "✅ Bracket reiniciado.";
+}
+
+/* ---------------- DESGLOSE DE ACIERTOS ---------------- */
+async function renderDesglose(){
+  const el = document.getElementById("tab-desglose");
+  el.innerHTML = `<div class="panel"><p class="hint">Cargando...</p></div>`;
+  try{
+    const partidos = await api("/api/partidos");
+    const conResultado = partidos.filter(p => p.tiene_resultado);
+    if(conResultado.length === 0){
+      el.innerHTML = `<div class="panel"><div class="panel-title">📈 Desgloses de Aciertos</div><p class="vacio">Todavía no hay partidos con resultado cargado.</p></div>`;
+      return;
+    }
+    const opciones = conResultado.map(p =>
+      `<option value="${p['Equipo local']}|${p['Equipo visitante']}|${p['Fecha']}">${p['Equipo local']} vs ${p['Equipo visitante']} (${p['Fecha']})</option>`
+    ).join("");
+    el.innerHTML = `
+      <div class="panel">
+        <div class="panel-title">📈 Desgloses de Aciertos</div>
+        <label class="hint">Selecciona el partido</label>
+        <select id="desglose-sel" onchange="cargarDesglose()" style="width:100%;max-width:480px;margin-top:6px;">${opciones}</select>
+        <div id="desglose-contenido"></div>
+      </div>`;
+    cargarDesglose();
+  }catch(e){
+    el.innerHTML = `<div class="panel"><p class="vacio">Error cargando desgloses: ${e.message}</p></div>`;
+  }
+}
+async function cargarDesglose(){
+  const [el_, ev, fecha] = document.getElementById("desglose-sel").value.split("|");
+  const cont = document.getElementById("desglose-contenido");
+  cont.innerHTML = `<p class="hint">Cargando...</p>`;
+  const data = await api(`/api/desglose?equipo_local=${encodeURIComponent(el_)}&equipo_visitante=${encodeURIComponent(ev)}&fecha=${encodeURIComponent(fecha)}`);
+  const r = data.resultado_real;
+  const banner = r ? `<div class="resultado-real-banner"><b>Resultado real:</b> ${r.equipo_local} ${r.gl} - ${r.gv} ${r.equipo_visitante}</div>` : "";
+
+  function tablaDe(lista){
+    if(!lista.length) return `<p class="vacio" style="padding:10px 0;">Nadie acertó esta categoría.</p>`;
+    const filas = lista.map(x => `<tr><td>${x.usuario}</td><td class="num"><b>${x.puntos}</b></td></tr>`).join("");
+    return `<table class="tabla"><thead><tr><th>Usuario</th><th class="num">Puntos</th></tr></thead><tbody>${filas}</tbody></table>`;
+  }
+
+  cont.innerHTML = `
+    ${banner}
+    <div class="desglose-grid">
+      <div class="desglose-col"><h4>🎯 Marcador exacto (6 pts)</h4>${tablaDe(data.marcador_exacto)}</div>
+      <div class="desglose-col"><h4>✅ Ganador/Empate sin exacto (3 pts)</h4>${tablaDe(data.ganador_empate)}</div>
+      <div class="desglose-col"><h4>🔢 Goles de un equipo (1 pt)</h4>${tablaDe(data.goles_un_equipo)}</div>
+    </div>`;
 }
 
 /* ---------------- INICIO ---------------- */
