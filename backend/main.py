@@ -680,6 +680,33 @@ def desglose_partido(equipo_local: str, equipo_visitante: str, fecha: str):
     return aciertos_de_un_partido(preds_df, resultados_reales, clave)
 
 
+@app.get("/api/resumen")
+def resumen_general():
+    preds_df, _, _, partidos = get_datos()
+    resultados_reales = cargar_resultados()
+
+    pendientes = []
+    for _, p in partidos.iterrows():
+        clave = f"{p['Equipo local']}|{p['Equipo visitante']}|{p['Fecha']}"
+        if clave not in resultados_reales:
+            pendientes.append(p)
+    proximo = None
+    if pendientes:
+        pendientes_ordenados = sorted(pendientes, key=lambda p: p["_fecha_dt"] or datetime.max)
+        p = pendientes_ordenados[0]
+        proximo = {
+            "equipo_local": p["Equipo local"], "equipo_visitante": p["Equipo visitante"],
+            "fecha": p["Fecha"], "grupo": p["Grupo"],
+        }
+
+    return {
+        "participantes": int(preds_df["Persona"].nunique()),
+        "partidos_totales": int(len(partidos)),
+        "partidos_jugados": int(len(resultados_reales)),
+        "proximo_partido": proximo,
+    }
+
+
 @app.get("/api/health")
 def health():
     return {"status": "ok"}
