@@ -1,180 +1,516 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The World Cup 2026 · Pronósticos de partidos</title>
-<link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
+@font-face {
+  font-family: "World";
+  src: url("../assets/fonts/WORLD.woff2") format("woff2"),
+       url("../assets/fonts/WORLD.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
 
-<header class="site-header">
-  <img class="hero-img" src="assets/img/background/header-mundial.jpg" alt="The World Cup 2026 · Pronósticos de partidos · Copa Mundial de la FIFA 2026">
+@font-face {
+  font-family: "World Condensed";
+  src: url("../assets/fonts/WORLD-Condensed.woff2") format("woff2"),
+       url("../assets/fonts/WORLD-Condensed.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
 
-  <h1 class="sr-only">Pronósticos de partidos — Copa Mundial de la FIFA 2026</h1>
+:root {
+  --bg: #00030a;
+  --bg-panel: #0a0f1c;
+  --bg-panel-light: #111729;
+  --gold: #e1ab2a;
+  --gold-light: #ffea9c;
+  --gold-dark: #5f4811;
+  --text: #f5f5f5;
+  --text-muted: #9d9d9d;
+  --border: #1c2333;
+}
 
-  <div class="nav-row">
-    <nav class="nav-tabs" id="navTabs">
-      <a href="#" data-tab="posiciones" class="active"><img src="assets/img/iconos/social_leaderboard_500dp_E3E3E3_FILL0_wght400_GRAD0_opsz48.png" alt="">Posiciones</a>
-      <a href="#" data-tab="grupos"><img src="assets/img/iconos/auto_awesome_mosaic_500dp_E3E3E3_FILL0_wght400_GRAD0_opsz48.png" alt="">Grupos</a>
-      <a href="#" data-tab="eliminatoria"><img src="assets/img/iconos/automation_500dp_E3E3E3_FILL0_wght400_GRAD0_opsz48.png" alt="">Eliminatoria</a>
-      <a href="#" data-tab="pronosticos"><img src="assets/img/iconos/sports_soccer_22dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.png" alt="">Pronósticos</a>
-      <a href="#" data-tab="podio"><img src="assets/img/iconos/rewarded_ads_500dp_E3E3E3_FILL0_wght400_GRAD0_opsz48.png" alt="">Podio</a>
-      <a href="#" data-tab="admin"><img src="assets/img/iconos/admin_panel_settings_500dp_E3E3E3_FILL0_wght400_GRAD0_opsz48.png" alt="">Admin</a>
-    </nav>
-    <button class="btn-login" id="btnLogin" type="button">Login</button>
-  </div>
-</header>
+* {
+  box-sizing: border-box;
+}
 
-<main>
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "World Condensed", "Arial Narrow", sans-serif;
+}
 
-  <!-- ===================== POSICIONES ===================== -->
-  <section class="tab-panel" id="tab-posiciones">
+h1, h2, h3, .brand, .nav-tabs a {
+  font-family: "World", "Arial", sans-serif;
+}
 
-    <div class="match-and-stats">
-      <div class="card next-match">
-        <h2>Próximo partido</h2>
-        <div class="match-row">
-          <div class="team">
-            <img src="assets/img/banderas/colombia.jpg" alt="Colombia">
-            <span>Colombia</span>
-          </div>
-          <div class="match-center">
-            <div class="date" id="matchDate">Jun 11</div>
-            <div class="vs">vs</div>
-            <div class="time" id="matchTime">18:00</div>
-          </div>
-          <div class="team">
-            <img src="assets/img/banderas/argentina.jpg" alt="Argentina">
-            <span>Argentina</span>
-          </div>
-        </div>
-      </div>
+a {
+  text-decoration: none;
+  color: inherit;
+}
 
-      <div class="card stats-card">
-        <div class="stat-row">
-          <img src="assets/img/iconos/account_circle_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.png" alt="">
-          <div><strong id="statParticipantes">52</strong><span>Participantes</span></div>
-        </div>
-        <div class="stat-row">
-          <img src="assets/img/iconos/sports_soccer_22dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.png" alt="">
-          <div><strong id="statPartidos">30</strong><span>Partidos</span></div>
-        </div>
-        <div class="stat-row">
-          <img src="assets/img/iconos/calendar_month_22dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.png" alt="">
-          <div><strong id="statFase">Fase de grupos</strong></div>
-        </div>
-      </div>
-    </div>
+.gold-text {
+  background: linear-gradient(180deg, var(--gold-light), var(--gold) 60%, var(--gold-dark));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
 
-    <div class="card">
-      <h2>Tabla de posiciones</h2>
-      <div class="table-wrap">
-        <table id="tablaPosiciones">
-          <thead>
-            <tr>
-              <th>Pos</th>
-              <th>Usuario</th>
-              <th>PJ</th>
-              <th>PG</th>
-              <th>PE</th>
-              <th>PP</th>
-              <th>Pts. Podio</th>
-              <th>Pts. Premios</th>
-              <th>Pts</th>
-            </tr>
-          </thead>
-          <tbody><!-- filas generadas por JS --></tbody>
-        </table>
-      </div>
-    </div>
+/* Header */
+.site-header {
+  position: relative;
+}
 
-    <div class="card">
-      <h2>Desglose de aciertos</h2>
-      <div class="breakdown-header">
-        <select id="selectPartidoDesglose">
-          <option>Estados Unidos vs Australia (19/06/2026)</option>
-        </select>
-        <span class="result" id="resultadoReal">Resultado real: Estados Unidos 2 - 0 Australia</span>
-      </div>
+.hero-img {
+  display: block;
+  width: 100%;
+  height: 420px;
+  object-fit: cover;
+  object-position: top;
+}
 
-      <div class="breakdown-rules">
-        <div><strong>Marcador exacto</strong>6 pts</div>
-        <div><strong>Ganador/empate sin exacto</strong>3 pts</div>
-        <div><strong>Goles de un equipo</strong>1 pt</div>
-      </div>
+.top-bar {
+  position: absolute;
+  top: 20px;
+  left: 5vw;
+  right: 5vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: .8rem;
+  color: var(--text-muted);
+  z-index: 2;
+}
 
-      <div class="breakdown-columns">
-        <div class="table-wrap">
-          <table id="tablaExacto">
-            <thead><tr><th>Usuario</th><th>Pts</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-        <div class="table-wrap">
-          <table id="tablaGanador">
-            <thead><tr><th>Usuario</th><th>Pts</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-        <div class="table-wrap">
-          <table id="tablaGoles">
-            <thead><tr><th>Usuario</th><th>Pts</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+.nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 5vw;
+  border-bottom: 1px solid var(--border);
+}
 
-  </section>
+.btn-login {
+  background: var(--gold);
+  color: var(--bg);
+  border: none;
+  padding: 8px 22px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-size: .85rem;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
 
-  <!-- ===================== GRUPOS ===================== -->
-  <section class="tab-panel" id="tab-grupos" hidden>
-    <div class="card placeholder">
-      <h2>Grupos</h2>
-      <p>Próximamente: tablas por grupo (A–L).</p>
-    </div>
-  </section>
+.btn-login:hover {
+  background: var(--gold-light);
+}
 
-  <!-- ===================== ELIMINATORIA ===================== -->
-  <section class="tab-panel" id="tab-eliminatoria" hidden>
-    <div class="card placeholder">
-      <h2>Eliminatoria</h2>
-      <p>Próximamente: bracket de fase eliminatoria.</p>
-    </div>
-  </section>
+.sponsor {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
 
-  <!-- ===================== PRONÓSTICOS ===================== -->
-  <section class="tab-panel" id="tab-pronosticos" hidden>
-    <div class="card placeholder">
-      <h2>Pronósticos</h2>
-      <p>Próximamente: formulario para registrar tus predicciones.</p>
-    </div>
-  </section>
+.sponsor strong {
+  color: var(--gold-light);
+}
 
-  <!-- ===================== PODIO ===================== -->
-  <section class="tab-panel" id="tab-podio" hidden>
-    <div class="card placeholder">
-      <h2>Podio final</h2>
-      <p>Próximamente: predicciones de podio y premios individuales.</p>
-    </div>
-  </section>
+.author {
+  text-align: right;
+}
 
-  <!-- ===================== ADMIN ===================== -->
-  <section class="tab-panel" id="tab-admin" hidden>
-    <div class="card placeholder">
-      <h2>Panel de administración</h2>
-      <p>Acceso restringido. Inicia sesión como administrador.</p>
-    </div>
-  </section>
+.author .year {
+  display: block;
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+.author .year.gold-text { font-family: "World"; }
 
-</main>
+.brand-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+}
 
-<footer>
-  Copa Mundial de la FIFA 2026 · Pronósticos de partidos
-</footer>
+.title-block .eyebrow {
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text-muted);
+  font-size: .9rem;
+  margin: 0 0 4px;
+}
 
-<script src="js/data.js"></script>
-<script src="js/app.js"></script>
-</body>
-</html>
+.title-block h1 {
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.btn-login {
+  border: 1px solid var(--gold);
+  color: var(--gold-light);
+  padding: 10px 28px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-size: .9rem;
+  transition: background .2s, color .2s;
+}
+
+.btn-login:hover {
+  background: var(--gold);
+  color: var(--bg);
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0,0,0,0) !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+}
+
+/* Nav tabs */
+.nav-tabs {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+}
+
+.nav-tabs a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  text-transform: uppercase;
+  font-size: .85rem;
+  letter-spacing: .05em;
+  color: var(--text-muted);
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+}
+
+.nav-tabs a img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  opacity: .8;
+}
+
+.nav-tabs a:hover {
+  color: var(--text);
+}
+
+.nav-tabs a.active {
+  color: var(--gold-light);
+  border-bottom-color: var(--gold);
+}
+
+/* Main */
+main {
+  padding: 32px 5vw 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.card {
+  background: rgba(255,255,255,.02);
+  border: 1px solid rgba(225,171,42,.4);
+  border-radius: 8px;
+  padding: 20px 24px;
+}
+
+.card h2 {
+  margin: 0 0 20px;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--gold-light);
+}
+
+/* Próximo partido */
+.next-match {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.next-match h2 {
+  text-align: center;
+}
+
+.match-and-stats {
+  display: flex;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.match-and-stats .next-match {
+  flex: 2;
+}
+
+.stats-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+}
+
+.stat-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.stat-row img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  opacity: .85;
+}
+
+.stat-row strong {
+  display: block;
+  font-family: "World";
+  font-size: 1.3rem;
+  color: var(--text);
+}
+
+.stat-row span {
+  display: block;
+  font-size: .75rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+@media (max-width: 640px) {
+  .match-and-stats {
+    flex-direction: column;
+  }
+}
+
+.next-match-stats {
+  display: flex;
+  gap: 32px;
+  font-size: .85rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.next-match-stats strong {
+  display: block;
+  color: var(--gold-light);
+  font-size: 1.4rem;
+  font-family: "World";
+}
+
+.match-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  padding: 16px 0;
+}
+
+.team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 140px;
+}
+
+.team img {
+  width: 84px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+.team span {
+  text-transform: uppercase;
+  font-size: .95rem;
+}
+
+.match-center {
+  text-align: center;
+}
+
+.match-center .vs {
+  font-size: 1rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.match-center .time {
+  font-family: "World";
+  font-size: 2rem;
+  color: var(--gold-light);
+}
+
+.match-center .date {
+  font-size: .8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+}
+
+thead th {
+  text-align: center;
+  text-transform: uppercase;
+  font-size: .75rem;
+  letter-spacing: .04em;
+  color: var(--gold-light);
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+thead th:first-child,
+tbody td:first-child {
+  text-align: left;
+}
+
+tbody td {
+  text-align: center;
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+tbody tr:hover {
+  background: var(--bg-panel-light);
+}
+
+.pts {
+  color: var(--gold-light);
+  font-weight: bold;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+/* Desglose de aciertos */
+.breakdown-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  font-size: .9rem;
+}
+
+.breakdown-header .result {
+  color: var(--gold-light);
+}
+
+.breakdown-rules {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.breakdown-rules div {
+  background: var(--bg-panel-light);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-size: .8rem;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.breakdown-rules strong {
+  display: block;
+  color: var(--gold-light);
+  font-size: .95rem;
+}
+
+.breakdown-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+.breakdown-columns table {
+  font-size: .82rem;
+}
+
+/* Stub pages */
+.placeholder {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--text-muted);
+}
+
+.placeholder h2 {
+  color: var(--gold-light);
+  font-size: 1.6rem;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-muted);
+  font-size: .8rem;
+  border-top: 1px solid var(--border);
+}
+
+/* --- Funcional: SPA tabs, login button, select --- */
+
+.author .by {
+  display: block;
+  font-size: .8rem;
+  color: var(--text-muted);
+}
+
+.btn-login {
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.tab-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.tab-panel[hidden] {
+  display: none;
+}
+
+.breakdown-header select {
+  background: var(--bg-panel-light);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: .85rem;
+}
+
+.breakdown-header select:focus,
+.btn-login:focus-visible,
+.nav-tabs a:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
