@@ -472,7 +472,10 @@ def posiciones_grupo(grupo: str):
 def listar_partidos():
     _, _, _, partidos = get_datos()
     resultados_reales = cargar_resultados()
-    filas = partidos.to_dict(orient="records")
+    partidos_ordenados = partidos.sort_values(
+        by="_fecha_dt", key=lambda col: col.fillna(datetime.max), kind="stable"
+    )
+    filas = partidos_ordenados.to_dict(orient="records")
     for f in filas:
         clave = f"{f['Equipo local']}|{f['Equipo visitante']}|{f['Fecha']}"
         f["tiene_resultado"] = clave in resultados_reales
