@@ -227,6 +227,57 @@ main {
   text-align: center;
 }
 
+.match-and-stats {
+  display: flex;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.match-and-stats .next-match {
+  flex: 2;
+}
+
+.stats-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+}
+
+.stat-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.stat-row img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  opacity: .85;
+}
+
+.stat-row strong {
+  display: block;
+  font-family: "World";
+  font-size: 1.3rem;
+  color: var(--text);
+}
+
+.stat-row span {
+  display: block;
+  font-size: .75rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+@media (max-width: 640px) {
+  .match-and-stats {
+    flex-direction: column;
+  }
+}
+
 .next-match-stats {
   display: flex;
   gap: 32px;
